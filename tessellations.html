@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="tessellations.css" />
+	<title>Tessellations</title>
+</head>
+<body>
+	<div id="column">
+		
+		<h1>
+			Tessellation Construction Method 1:
+			<br />
+			Constructing and Using an Irregular Polygon Tile
+		</h1>
+		<div id="player">
+			<span id="stop" class="inactive">stop</span>
+			<span id="play">play</span>
+		</div>
+		
+		<svg id="drawing" viewBox="-325 -200 650 400">
+			
+			<defs id="defs">
+				
+				<line id="gridlineHoriz" />
+				<line id="gridlineVert" />
+				
+				<polygon id="tile" />
+				<polygon id="singleTile" />
+				<polygon id="doubleTile" />
+				
+				<g id="sq4">
+					<use href="#singleTile" xlink:href="#singleTile" class="light" />
+					<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(90)" />
+					<use href="#singleTile" xlink:href="#singleTile" class="light" transform="rotate(180)" />
+					<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(270)" />
+				</g>
+				
+				<use id="loAc" href="#sq4" xlink:href="#sq4" />
+				<use id="hiGr" href="#sq4" xlink:href="#sq4" transform="rotate(90)" />
+				<use id="loGr" href="#sq4" xlink:href="#sq4" transform="scale(-1, 1)" />
+				<use id="hiAc" href="#sq4" xlink:href="#sq4" transform="rotate(90) scale(-1, 1)" />
+				
+				<g id="sq2">
+					<use href="#doubleTile" xlink:href="#doubleTile" class="dark" />
+					<use href="#doubleTile" xlink:href="#doubleTile" class="light" transform="rotate(180)" />
+				</g>
+				
+				<use id="ssw" href="#sq2" xlink:href="#sq2" />
+				<use id="wnw" href="#sq2" xlink:href="#sq2" transform="rotate(90)" />
+				<use id="nne" href="#sq2" xlink:href="#sq2" transform="rotate(180)" />
+				<use id="ese" href="#sq2" xlink:href="#sq2" transform="rotate(270)" />
+				<use id="sse" href="#sq2" xlink:href="#sq2" transform="scale(-1, 1)" />
+				<use id="wsw" href="#sq2" xlink:href="#sq2" transform="rotate(90) scale(-1, 1)" />
+				<use id="nnw" href="#sq2" xlink:href="#sq2" transform="rotate(180) scale(-1, 1)" />
+				<use id="ene" href="#sq2" xlink:href="#sq2" transform="rotate(270) scale(-1, 1)" />
+				
+			</defs>
+			
+			<g id="orientationTest">
+				<use href="#loAc" xlink:href="#loAc" x="-150px" y="-100px" />
+				<use href="#hiAc" xlink:href="#hiAc" x="-50px" y="-100px" />
+				<use href="#hiGr" xlink:href="#hiGr" x="50px" y="-100px" />
+				<use href="#loGr" xlink:href="#loGr" x="150px" y="-100px" />
+				<use href="#wnw" xlink:href="#wnw" x="-150px" y="0px" />
+				<use href="#nnw" xlink:href="#nnw" x="-50px" y="0px" />
+				<use href="#nne" xlink:href="#nne" x="50px" y="0px" />
+				<use href="#ene" xlink:href="#ene" x="150px" y="0px" />
+				<use href="#wsw" xlink:href="#wsw" x="-150px" y="100px" />
+				<use href="#ssw" xlink:href="#ssw" x="-50px" y="100px" />
+				<use href="#sse" xlink:href="#sse" x="50px" y="100px" />
+				<use href="#ese" xlink:href="#ese" x="150px" y="100px" />
+			</g>
+			
+			<g id="demo1view">
+				
+				<g id="graphGrid"></g>
+				
+				<polygon id="base" />
+				<polygon id="carved" />
+				<polygon id="rotator" />
+				
+				<g id="diamond">
+					<use href="#tile" xlink:href="#tile" id="initTile" />
+					<use href="#tile" xlink:href="#tile" id="TLTile" />
+					<use href="#tile" xlink:href="#tile" id="BLTile" />
+					<use href="#tile" xlink:href="#tile" id="BRTile" />
+				</g>
+				
+				<g id="initPat"></g>
+				<g id="pats0"></g>
+				<g id="pats1"></g>
+				<g id="pats2"></g>
+				<g id="pats3"></g>
+				
+				<use id="sq4init" href="#loAc" xlink:href="#loAc" />
+				<use id="sq2init" href="#ssw" xlink:href="#ssw" />
+				<use id="sq2flip" href="#sse" xlink:href="#sse" />
+				<use id="sq4flip" href="#loGr" xlink:href="#loGr" />
+				<line id="mirrorLine" />
+				
+				<use id="zoom" href="#tile" xlink:href="#tile" />
+				
+			</g>
+			
+		</svg>
+		
+		<p id="caption"></p>
+		<div id="footer">
+			<p>Designed by <a href="https://karenvagts.com">Karen Vagts</a></p>
+			<p>SVG format by <a href="http://jbdowse.com">Jonathan Dowse</a></p>
+		</div>
+		
+	</div>
+	
+	<script type="text/javascript" src="setup.js"></script>
+	<script type="text/javascript" src="generics.js"></script>
+	<script type="text/javascript" src="idtypes.js"></script>
+	<script type="text/javascript" src="player.js"></script>
+	<script type="text/javascript" src="animation.js"></script>
+	
+	<script type="text/javascript" src="demo1points.js"></script>
+	<script type="text/javascript" src="demo1shapes.js"></script>
+	<script type="text/javascript" src="demo1patterns.js"></script>
+	<script type="text/javascript" src="demo1animation.js"></script>
+	
+</body>
+</html>

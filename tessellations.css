@@ -1,0 +1,125 @@
+/* --------------- page layout -------------- */
+
+body {
+	background-color: #eee;
+	font-family: Helvetica, sans-serif;
+}
+
+#column {
+	max-width: 650px;
+	margin: 0 auto;
+}
+
+h1, #column>p, #drawing, #footer {
+	margin: 1em auto;
+}
+
+#drawing {
+	clear: both;
+	width: 100%;
+	height: auto;
+	max-width: 650px;
+	background-color: white;
+	margin: auto;
+}
+
+h1 {
+	font-size: medium;
+	font-weight: normal;
+	float: left;
+}
+
+#player * {
+	display: block;
+	float: right;
+	background-color: white;
+	padding: 0.5em;
+	margin: 1em 0 0.5em 0.5em;
+	border-radius: 5px;
+	border: solid 1px #aaa;
+	width: 4em;
+	text-align: center;
+}
+
+#player *:hover {
+	background-color: #ddd;
+}
+
+#player *:active {
+	background-color: #aaa;
+}
+
+.inactive {
+	color: #aaa;
+}
+
+#player *:hover.inactive {
+	background-color: white;
+}
+
+#player *:active.inactive {
+	background-color: white;
+}
+
+#caption {
+	font-size: x-large;
+	opacity: 1;
+	transition: opacity 0.5s;
+}
+
+#caption.hidden {
+	opacity: 0;
+	transition: opacity 0.5s;
+}
+
+#footer {
+	position: absolute;
+	bottom: 0;
+}
+
+#footer p {
+	font-size: small;
+	margin: 0;
+}
+
+a {
+	color: #36c;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:active {
+	color: #38f;
+}
+
+/* ---------- SVG elements - constant properties etc. ------------ */
+
+#graphGrid * {
+	stroke-width: 1;
+	stroke: #0cc;
+}
+
+#mirrorLine {
+	stroke-width: 1;
+	stroke: #333;
+}
+
+.dark, .light {
+	stroke-width: 0;
+	stroke: #fff;
+}
+
+.dark {
+	fill: #6ae; /*#577 #568 #60656a #444 #35a #46b #798 #4ae*/
+}
+
+.light {
+	fill: #fd7; /*#cda #cde #d0d6d8 #d74 #6dd #cdd #ed9 #fc7*/
+}
+
+#orientationTest {
+	display: none;
+}
