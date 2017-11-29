@@ -12,7 +12,7 @@ Pause/resume:
 
 	- Implement pause/resume, hopefully being able to stick with CSS transitions
 	- basic steps:
-	function getStyleOnPause(id, prop) {
+	function setStyleOnPause(id, prop) {
 		const currentStyles = window.getComputedStyle(svg(id).element());
 		const currentValue = currentStyles.getPropertyValue(prop); 
 		svg(id).style(prop, currentValue);
@@ -23,14 +23,16 @@ Pause/resume:
 	- also need to clearTimeout on the not-yet-started actions and then re-setTimeout them with correct delay times
 		- get timestamp at start: (new Date()).getTime() and again on any pause, then use the difference for new setTimeout times
 		- so actions should, instead of current structure where it's just an array of setTimeout functions, probably be an array of {function, absoluteTime},
-			and then on each play() from whatever location, all the remaining setTimeouts are called with adjusted times, and their numbers stored in playQueue
+			and then on each play() from whatever location, all the remaining setTimeouts are called with adjusted times, and their numbers stored in playQueue --> see below under "Timeline bar" too for further thoughts
 
 
 Timeline bar:
 
 	- make a timeline bar at base of viewport with a draggable cursor, like web videos
 		- make animation method .bookmark(bookmarkName) which can be placed in the animation definition wherever you want to be able to step to, and record the states of all animatedShapes (& caption) there during animation construction, and set them to those states when the cue is put at that bookmark
-		- each bookmark could be a little circle along the bar or something, and placed proportional to its time of appearance (record this.elapsedTime() at the bookmark and divide it by ending elapsedTime(), and place the bookmark circle at that fraction along the progress bar)
+			- also maybe include optional time parameter which specifies any additional wait time desired after resume before animation actually resumes (I guess this would just be for when you go to a bookmark while the player is playing, so that the player keeps playing automatically from the bookmark)
+
+		- each bookmark could appear as a little circle along the bar or something, and placed proportional to its time of appearance (record this.elapsedTime() at the bookmark and divide it by ending elapsedTime(), and place the bookmark circle at that fraction along the progress bar)
 		- ah, maybe the appearance can be just like a 1px horizontal line with small circles, tufteesque
 		- maybe each bookmark circle should just enlarge at its time, instead of having e.g. a sliding cue shape
 	
@@ -38,6 +40,16 @@ Timeline bar:
 
 	- maybe have a preview mini-viewer appear on hover over a bookmark circle that shows a scaled-down version of the state of the demo at that point, as YouTube does when hovering (or just dragging?) over the progress bar
 		- SVG-wise, this could be a single scaled-down copy of the demo-view <g> which would be translated to underneath whichever bookmark circle was being hovered under, and its child elements would have states equal to the main-view elements' states at that bookmark - note they'd need different ids, maybe just prefixed with "preview-" or something
+
+	- Overall, it might make sense for the set of states (as mentioned for bookmark() above) to be the fundamental data structure of an animation, rather than an array of functions & times; this would be:
+	 	- an array of times
+	 	- each time has an associated array of ids with state changing at that time
+		- each id has an associated array of properties that are changing at that time
+
+		- Not sure whether for transitions it makes sense to have the beginning and ending state included at their respective times, or whether the transition time should just be included at the start of the transition
+		- think I like having both start & end states included at their respective times, to allow e.g. possibly jumping to any point in the animation, not just bookmarks, but then it's a bit more confusing for instantaneous changes; but maybe they could just be flagged with something that indicates a jump at that time, so that any calculation of a state before them uses the previous value; or maybe they should just have a really quick transition
+			- this is basically setting up tweening
+			- would be nice if this allowed the transProps/Durs to be set a bit earlier than just before the transitions themselves, and then the transitions could have their full time instead of a very slightly reduced time, which might make interpolation more straightforward
 
 
 Element transition lists:
@@ -66,4 +78,8 @@ Element transition lists:
 					svg(id).addTransition(newTransition);
 				}
 			}
+
+	- Make time parameter in animation().to() optional, as it is in show() & hide(), and if unspecified, the change is instant
+	- Make another subroutine besides transition(), maybe just change() or something, that sets transProp/Dur to 0 and changes the property instantly to the new value, and call it from to/show/hide when time arg is excluded or less than transition delay time
+
 */
