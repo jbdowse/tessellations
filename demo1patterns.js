@@ -67,7 +67,6 @@ tessellations.build.demo1.patterns = function() {
 		
 				t.svg(patId).defineAnon('use', [
 					'href', '#' + squareDefId,
-					'xlink:href', '#' + squareDefId,
 					'x', shiftX,
 					'y', shiftY
 				]);

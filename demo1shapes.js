@@ -25,13 +25,11 @@ tessellations.build.demo1.shapes = function() {
 			svg('graphGrid')
 				.defineAnon('use', [
 					'href', '#gridlineHoriz',
-					'xlink:href', '#gridlineHoriz',
 					'x', 0,
 					'y', i * gridCell
 				])
 				.defineAnon('use', [
 					'href', '#gridlineVert',
-					'xlink:href', '#gridlineVert',
 					'x', i * gridCell,
 					'y', 0
 				]);
@@ -52,48 +50,53 @@ tessellations.build.demo1.shapes = function() {
 	})();
 
 
-	g.points('base', [
-		pt.shpTL(),
-		pt.shpBL(),
-		pt.shpBR()
-	]);
+	(function definePolygonPointsIIFE() {
 
-	g.points('carved', [
-		pt.shpTL(),
-		pt.shpBL(),
-		pt.shpBtmBump(),
-		pt.shpBR()
-	]);
+		g.points('base', [
+			pt.shpTL(),
+			pt.shpBL(),
+			pt.shpBR()
+		]);
 
-	g.points('rotator', [
-		pt.shpBL(),
-		pt.shpBtmBump(),
-		pt.shpBR()
-	]);
+		g.points('carved', [
+			pt.shpTL(),
+			pt.shpBL(),
+			pt.shpBtmBump(),
+			pt.shpBR()
+		]);
 
-	g.points('tile', [
-		pt.shpTL(),
-		pt.shpLeftBump(),
-		pt.shpBL(),
-		pt.shpBtmBump(),
-		pt.shpBR()
-	]);
+		g.points('rotator', [
+			pt.shpBL(),
+			pt.shpBtmBump(),
+			pt.shpBR()
+		]);
 
-	g.points('singleTile', [
-		pt.sqTL(),
-		pt.sqTLBump(),
-		pt.center(),
-		pt.sqTRBump(),
-		pt.sqTR()
-	]);
+		g.points('tile', [
+			pt.shpTL(),
+			pt.shpLeftBump(),
+			pt.shpBL(),
+			pt.shpBtmBump(),
+			pt.shpBR()
+		]);
 
-	g.points('doubleTile', [
-		pt.sqTL(),
-		pt.sqTLBump(),
-		pt.sqBRBump(),
-		pt.sqBR(),
-		pt.sqTR()
-	]);
+		g.points('singleTile', [
+			pt.sqTL(),
+			pt.sqTLBump(),
+			pt.center(),
+			pt.sqTRBump(),
+			pt.sqTR()
+		]);
+
+		g.points('doubleTile', [
+			pt.sqTL(),
+			pt.sqTLBump(),
+			pt.sqBRBump(),
+			pt.sqBR(),
+			pt.sqTR()
+		]);
+		
+	})();
+	
 	
 	return t.build.demo1;
 
@@ -123,76 +126,102 @@ tessellations.build.demo1.styles = function() {
 	
 	t.id('caption').style('transitionTimingFunction', 'linear');
 	
-	const allAnimatedShapes = [
-		'graphGrid',
-		'base',
-		'carved',
-		'rotator',
-		'diamond',
-		'TLTile',
-		'BLTile',
-		'BRTile',
-		'initPat',
-		'sq4init',
-		'sq4flip',
-		'sq2init',
-		'sq2flip',
-		'mirrorLine',
-		'pats0',
-		'pats1',
-		'pats2',
-		'pats3',
-		'zoom'
-	];
 	
-	for (const id of allAnimatedShapes) {
-		svg(id)
-			.initStyle('display', 'none')
-			.initStyle('opacity', 0);
-	}
+	(function hideAllIIFE() {
 	
-	const baseColorShapes = [
-		'base',
-		'carved',
-		'rotator',
-		'initTile',
-		'TLTile',
-		'BLTile',
-		'BRTile',
-		'zoom'
-	];
+		const allAnimatedShapes = [
+			'graphGrid',
+			'base',
+			'carved',
+			'rotator',
+			'diamond',
+			'TLTile',
+			'BLTile',
+			'BRTile',
+			'initPat',
+			'sq4init',
+			'sq4flip',
+			'sq2init',
+			'sq2flip',
+			'mirrorLine',
+			'pats0',
+			'pats1',
+			'pats2',
+			'pats3',
+			'zoom'
+		];
+	
+		for (const id of allAnimatedShapes) {
+			svg(id)
+				.initStyle('display', 'none')
+				.initStyle('opacity', 0);
+		}
+		
+	})();
+	
+	
+	(function setBaseColorIIFE() {
+		
+		const baseColorShapes = [
+			'base',
+			'carved',
+			'rotator',
+			'initTile',
+			'TLTile',
+			'BLTile',
+			'BRTile',
+			'zoom'
+		];
 
-	for (const id of baseColorShapes) {
-		svg(id).initStyle('fill', c.base);
-	}
+		for (const id of baseColorShapes) {
+			svg(id).initStyle('fill', c.base);
+		}
+		
+	})();
 	
-	const BLRotators = [
-		'rotator',
-		'diamond',
-		'TLTile',
-		'BLTile',
-		'BRTile'
-	];
+	
+	(function setRotationPointIIFE() {
+		
+		const BLRotators = [
+			'rotator',
+			'diamond',
+			'TLTile',
+			'BLTile',
+			'BRTile'
+		];
 
-	for (const id of BLRotators) {
-		const origin = t.geom.pxPt( pt.shpBL() );
-		svg(id).initStyle('transformOrigin', origin);
-	}
+		for (const id of BLRotators) {
+			const origin = t.geom.pxPt( pt.shpBL() );
+			svg(id).initStyle('transformOrigin', origin);
+		}
+		
+	})();
 	
-	svg('sq4init').initStyle('transform', scaleStr(pt.sqScaleUp(), pt.sqScaleUp()) );
 	
-	const laterSquares = [
-		'sq2init',
-		'sq2flip',
-		'sq4flip'
-	];
+	(function setSquarePositionsIIFE() {
 	
-	for (let i = 0; i < laterSquares.length; ++i) {
-		const xpos = pt.sq4(i + 1);
-		svg(laterSquares[i]).initStyle( 'transform', t.geom.shiftTo(xpos, 0) );
-	}
+		const laterSquares = [
+			'sq2init',
+			'sq2flip',
+			'sq4flip'
+		];
 	
-	svg('zoom').initStyle('transform', scaleStr(pt.zoomSmall(), pt.zoomSmall()) );
+		for (let i = 0; i < laterSquares.length; ++i) {
+			const xpos = pt.sq4(i + 1);
+			svg(laterSquares[i]).initStyle( 'transform', t.geom.shiftTo(xpos, 0) );
+		}
+		
+	})();
+	
+	
+	(function setInitialScalesIIFE() {
+	
+		svg('sq4init').initStyle('transform', scaleStr(pt.sqScaleUp(), pt.sqScaleUp()) );
+	
+		svg('zoom').initStyle('transform', scaleStr(pt.zoomSmall(), pt.zoomSmall()) );
+		
+	})();
+	
 	
 	return t.build.demo1;
 	

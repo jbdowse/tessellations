@@ -18,7 +18,18 @@ tessellations.load.idTypes = function() {
 		for (let i = 0; i < attrList.length; i += 2) {
 			let attrName = attrList[i];
 			let attrValue = attrList[i + 1];
-			element.setAttribute(attrName, attrValue);
+			
+			if (attrName === 'href') {
+				// note this is only for SVG elements!
+				// so need to revise/split to svg()-specific if href change is needed for non-SVG;
+				// this is to fix the bug of dynamically-changed-(xlink:)href <use>s not appearing in Safari
+				// see https://github.com/patrick-steele-idem/morphdom/issues/34
+				
+				element.setAttributeNS('http://www.w3.org/1999/xlink', attrName, attrValue);
+			}
+			else {
+				element.setAttribute(attrName, attrValue);
+			}
 		}
 	};
 	
