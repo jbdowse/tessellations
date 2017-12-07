@@ -16,17 +16,7 @@ tessellations.load.animation = function() {
 		
 		const transDelay_s = 0.02;
 
-		const captionTransTime = function() {
-			// cap.element().style.transitionDuration = '1s';
-			/*const timeStr = cap.element().style.transitionDuration;
-			// console.log(cap.element().style.transitionDuration);
-			const numStr = timeStr.substr(0, timeStr.length - 1);
-			console.log(Number(numStr));
-			return 1000 * Number(numStr);*/ // convert to ms
-	
-			/* fallback: */
-			return 500;
-		};
+		const captionTransTime = 500;
 	
 		return {
 		
@@ -52,7 +42,7 @@ tessellations.load.animation = function() {
 			captionTiming: (function(){
 	
 				const changeDelay = 50;
-				const changeTime = captionTransTime() + changeDelay;
+				const changeTime = captionTransTime + changeDelay;
 	
 				const showDelay = 50;
 				const showTime = changeTime + showDelay;
