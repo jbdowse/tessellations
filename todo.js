@@ -82,4 +82,99 @@ Element transition lists:
 	- Make time parameter in animation().to() optional, as it is in show() & hide(), and if unspecified, the change is instant
 	- Make another subroutine besides transition(), maybe just change() or something, that sets transProp/Dur to 0 and changes the property instantly to the new value, and call it from to/show/hide when time arg is excluded or less than transition delay time
 
+
+
+Copied in from ../tessnotes.txt:
+
+Tessellations notes from 171212
+- Possible librarifications:
+	- Constructing SVG tessellations
+		- Ways to create shapes that fit with copies of themselves as tessellations
+		- Isometries on those shapes that construct the tessellations, abstracting making sure the distances are right for the shape size, etc.
+		- Base shape/block position/rotation etc, extent of copies in whatever direction(s), or alternatively specify a clipping boundary to be filled in completely
+	- Animating SVG elements with CSS transitions
+		- Using the contours (sets of timelines of property changes) & actions objects (list of timeouts, built from contours) to allow stepping to any point in an animation
+		- Flexible player setup incl. arbitrary buttons to e.g. start different animations, though prob provide default button/progress bar/etc appearances
+	- Note that both would probably rely upon the svg() module
+	- These could be properties of a single library, split into multiple files
+	- Eventually: interactive tessellation construction - build your own unit shape & extend with isometries; if desktop/mobile app could save as SVG - check to see if there are any tiling/tessellation apps around already
+	
+171221 todo:
+- check thru Karen's latest emails for items & put here
+- make play & stop buttons into play & back-to-start buttons, moved down to lower left, with SVG (or Unicode) symbols with Unicode fallback if SVG, and with title text
+- text should be probably in ems with different sizes for different @media, test out on phone vs desktop - need to learn about @media
+	- think it may just be a way to specify different behavior for different screen widths? not sure tho
+	- in any case, want to just be able to have the page gracefully transition between different widths
+- also buttons should be below text, make it so that they don't overlap and that the number of text lines doesn't change the button position
+- increase accessibility, see ARIA docs linked by KV
+	- look up how to use Google accessibility extension - already installed but haven't figure out how to use it
+		- KV responded on how to use it, see emails
+- make iframe for KV linking, put credits outside of iframe
+- make page background white --> or --> maybe make the iframe white (encompassing just the animation/player/text) and keep the rest of the page gray
+
+180122 notes
+For librarification:
+- want to include setting up player in a really flexible way
+	 - assign id'd html elements to play/pause/etc functions onclick but allow user to choose the particular ids, e.g.
+		libname(?).setPlayButton(id-str);
+		or
+		libname(?).setControls({
+			play: (play button id str),
+			pause: (pause button id str, might be same as play button),
+			etc etc
+		});
+
+- of course would be good to look at popular libs like jquery, React, Angular, Vue, etc. to make sure these libraries would work with them without conflict
+- would like to be able to load the libraries with proper dependency order (e.g. both animation & tessellation rely on basic svg lib) similar to current setup.js
+	- might want a require()/import() sort of thing but would probably want it to be independent of require()s of other libraries
+		- could use ES6 import/export maybe? not sure how reliant one should be on ES6 for small libraries???
+
+- 180131 dependency note: need shape defpoints to be available to multiple modules: tiling module, animation module, etc. - maybe it should be a core module and defpoints can be shared as JSON or etc???
+	- MAYBE there's not really too much to tiling beyond the basic point/shape construction, transformation, etc, so maybe the tiling module should be the core module, and then the animation module depends on it; OR I wonder if some animation functions could be independent of the tiling/construction module, e.g. if you just wanted to animate SVG shapes independently defined, without needing the construction & transformation functions? and then you would use the tiling module only if you needed it? oh, maybe the defpoints/def-coords JSON could just be an interchange format between the two and the only interaction between them? hmm, think might still want transformation functions from tiling module in the animation module tho...
+	- one particular isometry fn that would be useful is a general 2-distinct-points to 2-distinct-points mapping, with option to reflect or not; I think that would handle all isometries, and in some cases it would be more convenient than figuring out fixed points/lines
+
+- API note: remember the initial state (CSS etc) of properties of shapes in an animation that change during the animation should be set at the beginning of the animation score
+- is there some way to work with Sass/Less etc for DRY w/r/t CSS definitions? (or a need to?)
+- lib name note: looks like tilings.js is available per goog - but not "tiling" singular - and singular is best avoided anyway because it can be interpreted as a gerund for e.g. making a tiled webpage layout 
+
+- think for interoperability with jQuery etc. it would be good if there were some way to for the id & svg methods to work on regular, unwrapped DOM elements, and be chainable...
+	- or maybe they could take either id-strings OR DOM elements/groups??? e.g. tilings.svg('circle') or tilings.svg($('circle'))??? hmmmmmmmmm --> ah remember that jQuery $(...) produces a jQuery object, so jQuery wraps the DOM too; maybe id() should be internal and only svg() part of API? 
+		- think that probably makes sense; note jQuery objects can be unwrapped via $('xyz')[n] or $('xyz').get(n), or an array of DOM elements from $('xyz').get()
+	- if animation module requires construction module, that might simplify dependency structure since I think svg() would be needed for both construction & animation - so construction could just contain the svg() definitions
+
+- possible future step is adding more interactivity (e.g. triggering some sort of animation by clicking on an SVG element with the properties of the animation depending on the location of the click), though that might be achievable by just making the animation/score/player functionality sufficiently generic
+
+- note Tweene http://tweene.com/, an existing animation-timeline library
+
+180128
+Thinking about selection/setup/playing of multiple animations on one page:
+	- let user assign string names to each animation e.g. "tess1", "tess2",
+	then selection buttons/links would listen for e.g. ...play("tess1"), ...play("tess2")
+
+180130
+OK so going through the existing code, what should be private and what should be part of the API, and of which module?
+- let's call the overall object tilings and call the modules build & animate, and assume build contains the basic svg() code, and that animate depends on build, and calling the existing overall object tess:
+
+Private to tilings.build:
+tess.arrays
+tess.buildType
+tess.id
+tess.geom (probably)
+tess.load (the shape-construction parts)?
+
+tilings.build API:
+tess.svg
+tess.geom (possibly)
+probably adapted parts of demo(1).points, demo(1).shapes, demo(1).styles
+probably adapted parts of demo(1) buildPattern, buildPatternSet
+
+Private to tilings.animate:
+probably some functions of tess.player
+tess.load (the animation parts)?
+probably parts of tess.animation or its eventual successor
+
+tilings.animate API:
+probably some functions of tess.player
+probably parts of tess.animation or its eventual successor
+
 */

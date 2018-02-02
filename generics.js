@@ -23,7 +23,7 @@ tessellations.load.arrays = function() {
 
 		csv: function(arr) {
 			let str = '';
-			let lastElement = arr[arr.length - 1];
+			const lastElement = arr[arr.length - 1];
 			const allButLast = arr.slice(0,-1)
 			for (const element of allButLast) {
 				str += element + ', ';

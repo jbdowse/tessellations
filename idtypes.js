@@ -34,167 +34,170 @@ tessellations.load.idTypes = function() {
 	};
 	
 	
-	const _id = {};
-
-	_id.proto = {
+	const _id = {
 	
-		id: function() {
-			return this._id;
-		},
-
-		// access to the unwrapped DOM element -
-		// need to make _element an instance var:
-		element: function() {
-			return this._element;
-		},
-
-		tag: function(className) {
-			this.element().classList.add(className);
-			return this;
-		},
-
-		untag: function(className) {
-			this.element().classList.remove(className);
-			return this;
-		},
-
-		listen: function(event_type, func) {
-			this.element().addEventListener(event_type, func);
-			return this;
-		},
-
-		attr: function(attr_list) {
-			_setAttrs(this.element(), attr_list);
-			return this;	
-		},
-
-		html: function(contents) {
-			this.element().innerHTML = contents;
-			return this;	
-		},
+		proto: {
 	
-		style: function(property, value) {
-			this.element().style[property] = value;
-			// console.log('style(): ' + this.id() + ' ' + property + ' changed to ' + value);
-			return this;
+			id: function() {
+				return this._id;
+			},
+
+			// access to the unwrapped DOM element -
+			// need to make _element an instance var:
+			element: function() {
+				return this._element;
+			},
+
+			tag: function(className) {
+				this.element().classList.add(className);
+				return this;
+			},
+
+			untag: function(className) {
+				this.element().classList.remove(className);
+				return this;
+			},
+
+			listen: function(event_type, func) {
+				this.element().addEventListener(event_type, func);
+				return this;
+			},
+
+			attr: function(attr_list) {
+				_setAttrs(this.element(), attr_list);
+				return this;	
+			},
+
+			html: function(contents) {
+				this.element().innerHTML = contents;
+				return this;	
+			},
+	
+			style: function(property, value) {
+				this.element().style[property] = value;
+				// console.log('style(): ' + this.id() + ' ' + property + ' changed to ' + value);
+				return this;
+			}
+		},
+		
+		
+		addInstanceVars: function(newObj, idStr) {
+			newObj._id = idStr;
+			newObj._element = document.getElementById(idStr);
+		}
+		
+	};
+	
+	
+	const _svg = {
+
+		proto: (function svgProtoIIFE() {
+	
+			const svgNS = 'http://www.w3.org/2000/svg';
+			const idp = _id.proto;
+			const ar = t.arrays;
+	
+			return {
+		
+				id: idp.id,
+
+				element: idp.element,
+		
+				style: idp.style,
+	
+				tag: idp.tag,
+
+				untag: idp.untag,
+
+				listen: idp.listen,
+
+				attr: idp.attr,
+		
+				on: function() {
+					this.style('display', '');
+					return this;
+				},
+		
+				off: function() {
+					this.style('display', 'none');
+					return this;
+				},
+		
+				initialStyles: function() {
+					return this._initialStyles;
+				},
+		
+				// need to make _initialStyles = [] an instance var:
+				addInitialStyleIfNew: function(prop, val) {
+					const propIndex = ar.indexOfKey(this.initialStyles(), 'property', prop);
+					const propIsNew = (-1 === propIndex);
+			
+					ar.addIfPredicate(this._initialStyles, {property: prop, value: val}, propIsNew);
+				
+					return this;
+				},
+		
+				initStyle: function(prop, val) {
+					this.addInitialStyleIfNew(prop, val)
+						.style(prop, val);
+					return this;
+				},
+		
+				reset: function() {
+			
+					for (const initialStyle of this.initialStyles() ) {
+						this.style(initialStyle.property, initialStyle.value);
+					}
+			
+					this.style('display', 'none')
+						.style('transitionProperty', '')
+						.style('transitionDuration', '');
+			
+					return this;
+				},
+	
+				addAnon: function(child_el_type) {
+					let child = document.createElementNS(svgNS, child_el_type);
+					this.element().appendChild(child);
+					return this;
+				},
+
+				add: function(child_el_type, child_id) {
+					let child = document.createElementNS(svgNS, child_el_type);
+					child.id = child_id;
+					this.element().appendChild(child);
+					return this;	
+				},
+
+				defineAnon: function(child_el_type, attr_list) {
+					let child = document.createElementNS(svgNS, child_el_type);
+					_setAttrs(child, attr_list);
+					this.element().appendChild(child);
+					return this;	
+				},
+
+				define: function(child_el_type, child_id, attr_list) {
+					let child = document.createElementNS(svgNS, child_el_type);
+					child.id = child_id;
+					_setAttrs(child, attr_list);
+					this.element().appendChild(child);
+					return this;	
+				}
+			};
+	
+		})(),
+		
+	
+		addInstanceVars: function(newObj, idStr) {
+			_id.addInstanceVars(newObj, idStr);
+			newObj._initialStyles = [];
 		}
 	};
 	
 	
-	const _svg = {};
-
-	_svg.proto = (function svgProtoIIFE() {
-	
-		const svgNS = 'http://www.w3.org/2000/svg';
-		const idp = _id.proto;
-		const ar = t.arrays;
-	
-		return {
-		
-			id: idp.id,
-
-			element: idp.element,
-		
-			style: idp.style,
-	
-			tag: idp.tag,
-
-			untag: idp.untag,
-
-			listen: idp.listen,
-
-			attr: idp.attr,
-		
-			on: function() {
-				this.style('display', '');
-				return this;
-			},
-		
-			off: function() {
-				this.style('display', 'none');
-				return this;
-			},
-		
-			initialStyles: function() {
-				return this._initialStyles;
-			},
-		
-			// need to make _initialStyles = [] an instance var:
-			addInitialStyleIfNew: function(prop, val) {
-				const propIndex = ar.indexOfKey(this.initialStyles(), 'property', prop);
-				const propIsNew = (-1 === propIndex);
-			
-				ar.addIfPredicate(this._initialStyles, {property: prop, value: val}, propIsNew);
-				
-				return this;
-			},
-		
-			initStyle: function(prop, val) {
-				this.addInitialStyleIfNew(prop, val)
-					.style(prop, val);
-				return this;
-			},
-		
-			reset: function() {
-			
-				for (const initialStyle of this.initialStyles() ) {
-					this.style(initialStyle.property, initialStyle.value);
-				}
-			
-				this.style('display', 'none')
-					.style('transitionProperty', '')
-					.style('transitionDuration', '');
-			
-				return this;
-			},
-	
-			addAnon: function(child_el_type) {
-				let child = document.createElementNS(svgNS, child_el_type);
-				this.element().appendChild(child);
-				return this;
-			},
-
-			add: function(child_el_type, child_id) {
-				let child = document.createElementNS(svgNS, child_el_type);
-				child.id = child_id;
-				this.element().appendChild(child);
-				return this;	
-			},
-
-			defineAnon: function(child_el_type, attr_list) {
-				let child = document.createElementNS(svgNS, child_el_type);
-				_setAttrs(child, attr_list);
-				this.element().appendChild(child);
-				return this;	
-			},
-
-			define: function(child_el_type, child_id, attr_list) {
-				let child = document.createElementNS(svgNS, child_el_type);
-				child.id = child_id;
-				_setAttrs(child, attr_list);
-				this.element().appendChild(child);
-				return this;	
-			}
-		};
-	
-	})();
-	
-
-	_id.addInstanceVars = function(newObj, idStr) {
-		newObj._id = idStr;
-		newObj._element = document.getElementById(idStr);
-	}
-	
 	t.id = t.buildType.cachingIdType(_id);
 	
-	
-	_svg.addInstanceVars = function(newObj, idStr) {
-		_id.addInstanceVars(newObj, idStr);
-		newObj._initialStyles = [];
-	};
-	
 	t.svg = t.buildType.cachingIdType(_svg);
-	
 	
 	return t.load;
 	
@@ -235,7 +238,42 @@ tessellations.load.geom = function() {
 			}
 
 			return str;
+		},			
+		
+		/* recursive versions of ptStr for kicks:
+		
+		ptStr: function(ptList) {
+			return (function addFollowingPoints(oldStr, ptIndex) {
+				return ptIndex >= ptList.length ?
+					oldStr :
+					(function() {
+						const coords = ptList[ptIndex];
+						return addFollowingPoints(
+							oldStr + coords[0] + ',' + coords[1] + ' ',
+							ptIndex + 1
+						);
+					})();
+			})('', 0);
 		},
+		
+		// struct-style:
+		
+		ptStr: function(ptList) {
+			return (function addFollowingPoints(point) {
+				return point.index >= ptList.length ?
+					point.prevStr :
+					(function() {
+						const coords = ptList[point.index];
+						return addFollowingPoints({
+							prevStr: point.prevStr + coords[0] + ',' + coords[1] + ' ',
+							index: point.index + 1
+						});
+					})();
+			})({ prevStr: '', index: 0 });
+		},
+		
+		*/
+		
 
 		pxPt: function(point) {
 			return point[0] + 'px ' + point[1] + 'px';
