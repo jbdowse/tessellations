@@ -10,6 +10,7 @@ tessellations.load.animation = function() {
 	const svg = t.svg;
 	const ar = t.arrays;
 	const cap = t.id('caption');
+	const titleCap = t.id('demo1-title');
 
 
 	const _ = (function animationPrivIIFE() {
@@ -170,6 +171,7 @@ tessellations.load.animation = function() {
 	
 			this.enqueue( function changeCaptionText() {
 				cap.html(str);
+				titleCap.html(str);
 			}, time + _.captionTiming.change() );
 	
 			this.enqueue( function fadeInCaption() {

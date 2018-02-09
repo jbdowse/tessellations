@@ -1,116 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+	<meta charset="UTF-8" />
 	<link rel="stylesheet" type="text/css" href="tessellations.css" />
 	<title>Tessellations</title>
 </head>
 <body>
 	<div id="column">
+		<div id="portal">
 		
-		<h1>
-			Tessellation Construction Method 1:
-			<br />
-			Constructing and Using an Irregular Polygon Tile
-		</h1>
-		<div id="player">
-			<span id="stop" class="inactive">stop</span>
-			<span id="play">play</span>
-		</div>
+			<h1>
+				Tessellation Construction Method 1:
+				<br />
+				Constructing and Using an Irregular Polygon Tile
+			</h1>
 		
-		<svg id="drawing" viewBox="-325 -200 650 400">
+			<svg id="drawing" viewBox="-325 -200 650 400">
 			
-			<defs id="defs">
+				<defs id="defs">
 				
-				<line id="gridlineHoriz" />
-				<line id="gridlineVert" />
+					<line id="gridlineHoriz" />
+					<line id="gridlineVert" />
 				
-				<polygon id="tile" />
-				<polygon id="singleTile" />
-				<polygon id="doubleTile" />
+					<polygon id="tile" />
+					<polygon id="singleTile" />
+					<polygon id="doubleTile" />
 				
-				<g id="sq4">
-					<use href="#singleTile" xlink:href="#singleTile" class="light" />
-					<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(90)" />
-					<use href="#singleTile" xlink:href="#singleTile" class="light" transform="rotate(180)" />
-					<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(270)" />
+					<g id="sq4">
+						<use href="#singleTile" xlink:href="#singleTile" class="light" />
+						<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(90)" />
+						<use href="#singleTile" xlink:href="#singleTile" class="light" transform="rotate(180)" />
+						<use href="#singleTile" xlink:href="#singleTile" class="dark" transform="rotate(270)" />
+					</g>
+				
+					<use id="loAc" href="#sq4" xlink:href="#sq4" />
+					<use id="hiGr" href="#sq4" xlink:href="#sq4" transform="rotate(90)" />
+					<use id="loGr" href="#sq4" xlink:href="#sq4" transform="scale(-1, 1)" />
+					<use id="hiAc" href="#sq4" xlink:href="#sq4" transform="rotate(90) scale(-1, 1)" />
+				
+					<g id="sq2">
+						<use href="#doubleTile" xlink:href="#doubleTile" class="dark" />
+						<use href="#doubleTile" xlink:href="#doubleTile" class="light" transform="rotate(180)" />
+					</g>
+				
+					<use id="ssw" href="#sq2" xlink:href="#sq2" />
+					<use id="wnw" href="#sq2" xlink:href="#sq2" transform="rotate(90)" />
+					<use id="nne" href="#sq2" xlink:href="#sq2" transform="rotate(180)" />
+					<use id="ese" href="#sq2" xlink:href="#sq2" transform="rotate(270)" />
+					<use id="sse" href="#sq2" xlink:href="#sq2" transform="scale(-1, 1)" />
+					<use id="wsw" href="#sq2" xlink:href="#sq2" transform="rotate(90) scale(-1, 1)" />
+					<use id="nnw" href="#sq2" xlink:href="#sq2" transform="rotate(180) scale(-1, 1)" />
+					<use id="ene" href="#sq2" xlink:href="#sq2" transform="rotate(270) scale(-1, 1)" />
+				
+				</defs>
+			
+				<g id="orientationTest">
+					<use href="#loAc" xlink:href="#loAc" x="-150px" y="-100px" />
+					<use href="#hiAc" xlink:href="#hiAc" x="-50px" y="-100px" />
+					<use href="#hiGr" xlink:href="#hiGr" x="50px" y="-100px" />
+					<use href="#loGr" xlink:href="#loGr" x="150px" y="-100px" />
+					<use href="#wnw" xlink:href="#wnw" x="-150px" y="0px" />
+					<use href="#nnw" xlink:href="#nnw" x="-50px" y="0px" />
+					<use href="#nne" xlink:href="#nne" x="50px" y="0px" />
+					<use href="#ene" xlink:href="#ene" x="150px" y="0px" />
+					<use href="#wsw" xlink:href="#wsw" x="-150px" y="100px" />
+					<use href="#ssw" xlink:href="#ssw" x="-50px" y="100px" />
+					<use href="#sse" xlink:href="#sse" x="50px" y="100px" />
+					<use href="#ese" xlink:href="#ese" x="150px" y="100px" />
 				</g>
+			
+				<g id="demo1view">
+					
+					<title id="demo1-title"></title>
 				
-				<use id="loAc" href="#sq4" xlink:href="#sq4" />
-				<use id="hiGr" href="#sq4" xlink:href="#sq4" transform="rotate(90)" />
-				<use id="loGr" href="#sq4" xlink:href="#sq4" transform="scale(-1, 1)" />
-				<use id="hiAc" href="#sq4" xlink:href="#sq4" transform="rotate(90) scale(-1, 1)" />
+					<g id="graphGrid"></g>
 				
-				<g id="sq2">
-					<use href="#doubleTile" xlink:href="#doubleTile" class="dark" />
-					<use href="#doubleTile" xlink:href="#doubleTile" class="light" transform="rotate(180)" />
+					<polygon id="base" />
+					<polygon id="carved" />
+					<polygon id="rotator" />
+				
+					<g id="diamond">
+						<use href="#tile" xlink:href="#tile" id="initTile" />
+						<use href="#tile" xlink:href="#tile" id="TLTile" />
+						<use href="#tile" xlink:href="#tile" id="BLTile" />
+						<use href="#tile" xlink:href="#tile" id="BRTile" />
+					</g>
+				
+					<g id="initPat"></g>
+					<g id="pats0"></g>
+					<g id="pats1"></g>
+					<g id="pats2"></g>
+					<g id="pats3"></g>
+				
+					<use id="sq4init" href="#loAc" xlink:href="#loAc" />
+					<use id="sq2init" href="#ssw" xlink:href="#ssw" />
+					<use id="sq2flip" href="#sse" xlink:href="#sse" />
+					<use id="sq4flip" href="#loGr" xlink:href="#loGr" />
+					<line id="mirrorLine" />
+				
+					<use id="zoom" href="#tile" xlink:href="#tile" />
+				
 				</g>
-				
-				<use id="ssw" href="#sq2" xlink:href="#sq2" />
-				<use id="wnw" href="#sq2" xlink:href="#sq2" transform="rotate(90)" />
-				<use id="nne" href="#sq2" xlink:href="#sq2" transform="rotate(180)" />
-				<use id="ese" href="#sq2" xlink:href="#sq2" transform="rotate(270)" />
-				<use id="sse" href="#sq2" xlink:href="#sq2" transform="scale(-1, 1)" />
-				<use id="wsw" href="#sq2" xlink:href="#sq2" transform="rotate(90) scale(-1, 1)" />
-				<use id="nnw" href="#sq2" xlink:href="#sq2" transform="rotate(180) scale(-1, 1)" />
-				<use id="ene" href="#sq2" xlink:href="#sq2" transform="rotate(270) scale(-1, 1)" />
-				
-			</defs>
 			
-			<g id="orientationTest">
-				<use href="#loAc" xlink:href="#loAc" x="-150px" y="-100px" />
-				<use href="#hiAc" xlink:href="#hiAc" x="-50px" y="-100px" />
-				<use href="#hiGr" xlink:href="#hiGr" x="50px" y="-100px" />
-				<use href="#loGr" xlink:href="#loGr" x="150px" y="-100px" />
-				<use href="#wnw" xlink:href="#wnw" x="-150px" y="0px" />
-				<use href="#nnw" xlink:href="#nnw" x="-50px" y="0px" />
-				<use href="#nne" xlink:href="#nne" x="50px" y="0px" />
-				<use href="#ene" xlink:href="#ene" x="150px" y="0px" />
-				<use href="#wsw" xlink:href="#wsw" x="-150px" y="100px" />
-				<use href="#ssw" xlink:href="#ssw" x="-50px" y="100px" />
-				<use href="#sse" xlink:href="#sse" x="50px" y="100px" />
-				<use href="#ese" xlink:href="#ese" x="150px" y="100px" />
-			</g>
-			
-			<g id="demo1view">
-				
-				<g id="graphGrid"></g>
-				
-				<polygon id="base" />
-				<polygon id="carved" />
-				<polygon id="rotator" />
-				
-				<g id="diamond">
-					<use href="#tile" xlink:href="#tile" id="initTile" />
-					<use href="#tile" xlink:href="#tile" id="TLTile" />
-					<use href="#tile" xlink:href="#tile" id="BLTile" />
-					<use href="#tile" xlink:href="#tile" id="BRTile" />
-				</g>
-				
-				<g id="initPat"></g>
-				<g id="pats0"></g>
-				<g id="pats1"></g>
-				<g id="pats2"></g>
-				<g id="pats3"></g>
-				
-				<use id="sq4init" href="#loAc" xlink:href="#loAc" />
-				<use id="sq2init" href="#ssw" xlink:href="#ssw" />
-				<use id="sq2flip" href="#sse" xlink:href="#sse" />
-				<use id="sq4flip" href="#loGr" xlink:href="#loGr" />
-				<line id="mirrorLine" />
-				
-				<use id="zoom" href="#tile" xlink:href="#tile" />
-				
-			</g>
-			
-		</svg>
+			</svg>
 		
-		<p id="caption"></p>
-		<!-- <div id="footer">
+			<p id="caption"></p>
+			
+			<div id="player">
+				
+				<svg width="100" height="40" viewBox="-50 -20 100 40">
+					<g id="play">
+						<polygon points="-12,-12 -12,12 12,0" />
+						<rect class="tooltip-area">
+							<title>play</title>
+						</rect>
+					</g>
+					<g id="to-start">
+						<rect x="-15" y="-9" width="6" height="18" />
+						<polygon points="-9,0 3,9 3,-9" />
+						<polygon points="3,0 15,9 15,-9" />
+						<rect class="tooltip-area">
+							<title>back to start</title>
+						</rect>
+					</g>
+				</svg>
+				
+			</div>
+			
+		</div> <!-- end #portal -->
+		
+		<div id="footer">
 			<p>Designed by <a href="https://karenvagts.com">Karen Vagts</a></p>
 			<p>SVG format by <a href="http://jbdowse.com">Jonathan Dowse</a></p>
-		</div> -->
+		</div>
 		
-	</div>
+	</div> <!-- end #column -->
 	
 	<script type="text/javascript" src="setup.js"></script>
 	<script type="text/javascript" src="generics.js"></script>

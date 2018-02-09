@@ -177,4 +177,335 @@ tilings.animate API:
 probably some functions of tess.player
 probably parts of tess.animation or its eventual successor
 
+180206
+thinking about immutability via Object.defineProperty() options:
+- make it easy to make objects/"namespaces" fully immutable
+- but also make it easy to make extendable "namespaces" and sub-namespaces
+	where all their non-namespace contents are fully immutable, but namespaces
+	can gain new properties
+	- but: also allow "closing" of namespaces to prevent further extension
+		- maybe provide option to close just the set of the namespace's own children
+		(i.e. its properties) but let its sub-namespaces remain extendable;
+		- vs. option to close the parent namespace and all its sub-namespaces at the same time
+- note that deep freeze doesn't work on cyclic reference graphs
+- think it makes sense to keep SVG etc. elements that change over time as mutable
+	since that's simpler to implement and reflects their behavior
+
+example:
+
+(assuming t = tilings)
+
+var(?) demo1 = demo! || t.ns(); // make namespace
+
+demo1.points = t.ns();
+
+const _SquarePoints = t.fn(function(rad) { // make non-redefinable function
+
+	const _start = -rad;
+	const _end = rad;
+
+	return {
+		start: _start,
+		end: _end,
+		length: 2*rad,
+		center: [0, 0],
+		TL: [_start, _start],
+		TR: [_end, _start],
+		BL: [_start, _end],
+		BR: [_end, _end]		
+	};
+});
+
+const _shp = demo1.points.shp = t.rec(function shpIIFE() { // make non-extendable record
+
+	const s = _SquarePoints(64);
+
+	s.gridSubdivs = 4;
+	s.gridCell = s.length/s.gridSubdivs;
+	s.btmBump = [0, s.end - s.gridCell]; // bottom bump-in
+	s.leftBump = [s.start - s.gridCell, 0]; // left bumpout
+
+	return s;
+
+}());
+
+const _sq = demo1.points.sq = t.rec(function sqIIFE() {
+
+	const s = _SquarePoints(32);
+
+	const _bump = s.length/8;
+
+	s.TLBump = [s.start + _bump, -_bump];
+	s.TRBump = [_bump, s.start + _bump];
+	s.BRBump = [s.end - _bump, _bump];
+	s.scaleUp = _shp.length/s.length * Math.sqrt(2);
+
+	return s;
+
+}());
+
+demo1.points.pat = t.rec(function patIIFE() {
+
+	const _sqsPerSide = 3;
+	const _gutter = 16;
+
+	return {
+		sqsPerSide: _sqsPerSide,
+		shift: _sq.length * _sqsPerSide + _gutter
+	};
+
+}());
+
+demo1.points.line = t.rec(function lineIIFE() {
+
+	const _offset = 0.5;
+	const _gridStart = _shp.start + _offset;
+	const _gridEnd = _shp.end + _offset;
+
+	return {
+		cx: _offset,
+		cy: _offset,
+		gridTL: [_gridStart, _gridStart],
+		gridTR: [_gridEnd, _gridStart],
+		gridBL: [_gridStart, _gridEnd]
+	};
+
+})();
+
+demo1.points.rot = t.rec({
+	x: _shp.start,
+	y: _shp.end
+});
+
+demo1.points.zoom = t.rec(
+	small: 1/64,
+	large: 2
+)
+
+demo1.points.sq4 = t.fn(function(n) {
+	const zero_dist = -3 * _sq.length;
+	const unit_dist = 2 * _sq.length;
+	return zero_dist + n * unit_dist;
+});
+
+demo1.points.sq3 = t.fn(function(n) {
+	const zero_dist = -_pat.shift;
+	return zero_dist + n * _pat.shift;
+});
+
+// alternative to the last few items:
+
+t.add(demo1.points, {
+	rot: {
+		x: _shp.start,
+		y: _shp.end
+	},
+	zoom: {
+		small: 1/64,
+		large: 2
+	},
+	sq4: function(n) {
+		const zero_dist = -3 * _sq.length;
+		const unit_dist = 2 * _sq.length;
+		return zero_dist + n * unit_dist;
+	},
+	sq3: function(n) {
+		const zero_dist = -_pat.shift;
+		return zero_dist + n * _pat.shift;
+	}
+}); // all these are automatically deep-immutable;
+	// probably should have to declare sub-namespaces separately
+
+t.close(demo1.points);
+
+-----------
+
+further geometry construction thoughts:
+- in addition to 2-point isometry/scale, (or 3-point affine),
+	for simple scaling/moving, have an option to provide a start point,
+	the corresponding output point, and the scale factor;
+	could also extend this to rotations with i/o points, scale factor, and angle of rotation
+
+want to step through the process of defining the shapes of demo1, maybe in plain English
+to start, to help figure out an API that would make it as easy as possible:
+
+- a square centered vert & horiz in player window, some specific width/height
+- gridlines dividing the square in quarter pieces (so 5 gridlines in each direction)
+- base = triangle of TL, BL, BR points of square
+- bump defpoints: one at (x center, 1/4 of square up from bottom of square);
+	the other = the first rotated 90˚ccw around square's BL corner = shape-rotator-point
+- rotator = triangle of BL, bump1, BR
+- carved = base \ triangle
+- shape = TL bump2 BL bump1 BR = (rotate (rotator, 90˚ccw around shape-rotator-point)) | carved
+	^ provide for defining a transformation of (90˚ccw around shape-rotator-point)
+	since it's used for both bump2 and rotator rotation and:
+- shapeTL = shape to start; eventual transformn = 90srp
+- shapeBL = " ; " = 180srp
+- shapeBR = " ; " = 270srp
+- diamond = group(shape, shapeTL, shapeBL, shapeBR)
+- transform diamond:
+	1. rotate it 45˚ccw while moving srp to window-center
+	2. eventually scale it down to the tiling-size
+--> maybe transform-by-points could have args ([ip1, op1], [ip2, op2], [ip3, op3]) (2 & 3 optional)
+	and for any of the points, if i is same as o, just have a single point value instead of an array
+	- maybe for clarity, e.g. ({i: [ip1x,ip1y], o: [op1x,op1y]}, [fp2x,fp2y]) (fp = fixed point)
+- basic tiling: 3x3 grid of small squares, initial one centered on window-center
+- set of 4 squares: in horizontal line, equally spaced, group centered on window-center
+	- on-center spacing of ends = two * on-center of patterns, which is (pattern-width + gutter)
+	- sq 1 = init tile
+	- sq 2 = (shape0 | shape90), (shape180 | shape270)
+	- sq 3 = flipH(sq 2)
+	- sq 4 = flipH(sq 1)
+- mirror line: vertical, centered on window-center, a specific height
+- set of 3 squares: same end positions as sqs-4, but with sq 3 moving to R end and sq 2 moving to middle; sq 1 stays fixed
+- patterns: 3 in a row, same centers as sqs-3
+	- 4 sets of patterns defined by generators as currently
+		- except want to make sure the various rotations/flips for indiv tiles are easy to do
+		(center stays fixed when apply flip or rotation)
+- zoom: same shape as original shape; scale starts at specific value, ends at a larger specific value;
+	shape centered on window-center the whole time
+
+Now to script the above in a desired API:
+--> note: think about ACAD commands
+
+w = t.window('player'); // associates to #player in DOM
+cp = w.center();
+sqSide = 64;
+gridSq = w.square(sqSide, cp) -- ah how about square({s: sqSide, c: cp})
+	- could also have e.g. square({BL: ..., top: ...}) etc.
+gridlineH = w.line(gridSq.TL, gridSq.TR)
+gridH = w.array(gridlineH, {e: mv(0,sqSide), n: 4}) // alt: {s: mv(...), n: 4}; e = end, s = step, n = num of addl copies
+grid = w.group(gridH, rotate(gridH, 90, cp));
+--> alt via chaining:
+grid = gridSq
+	.line(<-.TL, <-.TR)
+	.array({mv(0, sqSide), n: 4})
+	.groupWith(<-.rotate(90, cp));
+roPt = gridSq.BL;
+base = gridSq.polygon(<-.TL, roPt, <-.BR);
+bump1 = gridSq.point(0, 1/2); // relative to gridSq center; L & T = -1, R & B = 1
+ro = t.rotate(90, roPt);
+bump2 = ro(bump1);
+rotator = w.polygon(roPt, bump1, gridSq.BR);
+carved = base.minus(rotator);
+shape = rotator.apply(ro).plus(base);
+	// note need apply in place vs. apply to make copy; may need this for all transformations
+	// - think better to make the copy version the basic one (functional style), and in-place explicit
+ro2 = ro.times(2);
+ro3 = ro.times(3); // <--- these get used in the animation, so they should be properties of an object,
+	as should any other variables that are used in the animation
+diamond = shape.groupWithCopies(4); // accessible maybe by diamond.get(0), ..., diamond.get(3)
+diamondRotation = t.trans({i: roPt, o: cp, ro: 45});
+tileSide = 32;
+diamondScale = t.scale(tileSide/sqSide * Math.sqrt(2), cp);
+tilingTemplate = w.tile([3,3], cp);
+	// will have to think much more about
+	possible params of .tile, e.g. what if they're hexagonal or triangular;
+	what if you want to fill their container in some or all directions
+	rather than fill a certain number; what if you want an irregularly-bounded set of tiles
+gutter = 24;
+sqLeft = cp.mv(-(tilingTemplate.width() + gutter), 0);
+sqRight = sqLeft.flip(mv);
+sqs4 = w.array({b: sqLeft, e: sqRight, n: 3});
+sqs3 = w.array([sqLeft, cp, sqRight]);
+// --> think there needs to be an easy way to assign classes &/ ids to
+	DOM (SVG) elements corresponding to tilings objects - in order to e.g.
+	give correct fill colors to shapes, e.g.:
+sq4 = diamond.apply([diamondRotation, diamondScale]);
+sq4.get([0, 2]).attr('.light');
+sq4.get([1, 3]).attr('.dark');
+sq2 = w.group(t.union(sq4.get(0), sq4.get(1)), t.union(sq4.get(2), sq4.get(3)));
+sq2flip = sq2.flipH(cp);
+sq4flip = sq4.flipH(cp);
+// --> also need to make sure that these constructions intelligently
+	make <defs> vs <use> vs plain SVG elements depending on their use
+	- or maybe that should be explicitly controlled by the user
+
+180207
+- note that functions can have properties assigned to them,
+e.g.:
+function f(x) {return x * x;}
+f.exp = 2;
+- presumably something like this is how you can have both jQuery(arg).method1() and jQuery.method2()
+think it makes sense to use a jQ-like syntax for getting elements:
+
+const t = tilings;
+const cp = t('player').center();
+const sqSide = 64;
+// aha for things like gridSq, it might be useful for them to be able to be simple
+// mathematical objects, rather than e.g. elements of <defs>/<symbol>
+const gridSq = t.def('square', {s: sqSide, c: cp});
+// .def relating to defpoints; although this might make user think it's being added to <defs>
+// ^ again, make gridSq a property of a persistent object if needed in the animation or elsewhere
+// ^ ah, call these guides instead; could have: t.guide, t.defs (t.symbol?), t.draw with sub-properties:
+const gridSq = t.guide.sq({s: sqSide, c: cp});
+// aha note the <pattern> SVG element for tiling
+// note: use <title> tags on SVG elements to increase accessibility
+
+180208
+- grids: are such a commonly needed kind of guide that it definitely
+	makes sense to include them; possible or required params:
+	o: origin point
+	minX, maxX, minY, maxY, min (includes both x & y), max (ditto)
+	^ should the units of these be grid positions or 
+		- all of these are optional; where excluded, the grid extends to edge of container
+	unitX, unitY: length of grid cell in px
+	countX, countY: number of cells
+	angleX, angleY: angle of x & y lines; default x = 0, y = 90 (or -90?)
+	slopeX, slopeY: alternative to angles in (standard y)/(standard x) slope; maybe not able to express vertical line this way unless can use null or similar
+ 
+- maybe use this syntax to differentiate guides from DOM elements:
+	t.grid(...) is a guide;
+	t('base').grid('baseGrid', {...}) is an SVG object - grids would be depicted by sets of lines - detect edge of container for indefinite grids - probably use <symbol> or <defs> for gridline defn and <use> for the copies
+
+- guides can maybe be lazy, or at least grids could be - actually grids could just be structs with spacing & extents properties - no need for them to enumerate their constituent points/lines
+- ^ guides are just simple numerical objects
+- ^ possibly include corresponding guide data into SVG element wrappers, BUT this may well not be necessary assuming there are accessible SVG DOM properties with any geometry data needed
+- guides should be immutable; transformations of guides yield new guides
+- guide lines should be able to be segments, rays, or lines:
+	- segments: define by endpoints or by 1 endpoint + angle + length or relative x,y change, or thru-points plus distance of endpoints from either one (actually thru-points could lie on extension of segment, not necessarily segment itself); or by thru-point & xmin/xmax &/ ymin/ymax where possible
+	- rays: define by endpoint & a thru-point, or endpoint + angle or slope, or thru-point + distance to endpoint + slope/angle, or 2 thru-points + endpoint x or y, etc.
+	- lines: define by thru-point + angle/slope or by 2 thru-points
+- maybe t.xing(line1, line2) = (for non-parallel segments/rays/lines line, line2) intersection point of (infinite) lines containing line1 & line2; if line1 & line2 are parallel, incl. if they're collinear, maybe return null & console.log a warning
+
+so then e.g.:
+
+const cp = t('player').center(); // returns a guide point
+const gridU = 32;
+t('player').grid('grid', {o: cp, min: -2, max: 2, u: gridU});
+	// min & max as single numbers mean minX = minY = -2; could also have e.g. min: [-2, -1] meaning minX = -2, minY = -1
+	// here, can also use t('grid') like a guide - just in this case it's also associated to a DOM element
+const roPt = t('grid').BL();
+const bumpIn = t('grid').pt(0, 1);
+	// could also have Grid.lineX(n) & .lineY(n) to get lines out of grids
+const bumpOut = bumpIn.rotate(roPt, 90); // could also use t('grid').pt(-3, 0)
+	^ bumpOut defn may not really be needed
+t('player').pgon('base', [t('grid').TL(), roPt, t('grid').BR()]);
+t('player').pgon('rotator', [roPt, bumpIn, t('grid').BR()]);
+t('player').pgon('carved', ) \\
+	// aha, could define plines BL-TL-TR, BL-bumpIn-TR, BL-TR then use them to define base, carved, rotator:
+const TL = t('player').TL();
+const BR = t('player').BR();
+const topPline = t.pline([roPt, TL, BR]);
+const midPline = t.pline([roPt, bumpIn, BR]);
+const btmPline = t.pline([roPt, BR]);
+t('player').pgonFromPlines('base', [topPline, btmPline]);
+t('player').pgonFromPlines('carved', [topPline, midPline]);
+t('player').pgonFromPlines('rotator', [midPline, btmPline]);
+// maybe consolidate the above:
+t.iterate(
+	t('player').pgonFromPlines,
+	[
+		['base', [topPline, btmPline]],
+		['carved', [topPline, midPline]],
+		['rotator', [midPline, btmPline]]
+	]
+);
+// hmm what about making t('shape')? would still be useful to have union for that
+// but on a quick glance it looks like boolean ops are complex to implement, so probably
+	skip that and stick with flexible line/intersection ops
+t('player').pgon('shape', [TL, bumpOut, roPt, bumpIn, BR]);
+// now note that if polygon#shape is already in the markup, just without point defns, could have e.g.:
+t('shape').setPts([TL, bumpOut, ...]);
+
 */

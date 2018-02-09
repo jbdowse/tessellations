@@ -1,17 +1,38 @@
 /* --------------- page layout -------------- */
 
-body {
-	background-color: #eee;
+html {
 	font-family: Helvetica, sans-serif;
+	font-size: 16px;
 }
+
+body {
+	background-color: white; /* #eee */
+}
+
+/* @media screen and (max-width: 500px) {
+	html {
+		font-size: 110%;
+	}
+} */
 
 #column {
 	max-width: 650px;
 	margin: 0 auto;
+	overflow: auto;
+}
+
+#portal {
+	overflow: auto;
 }
 
 h1, #column>p, #drawing, #footer {
 	margin: 1em auto;
+}
+
+h1 {
+	font-size: 1em;
+	font-weight: normal;
+	float: left;
 }
 
 #drawing {
@@ -23,22 +44,38 @@ h1, #column>p, #drawing, #footer {
 	margin: auto;
 }
 
-h1 {
-	font-size: medium;
-	font-weight: normal;
+#caption {
+	font-size: 1.5em;
+	opacity: 1;
+	transition: opacity 0.5s;
 	float: left;
+	min-height: 4em;
+	overflow: auto;
+	margin: 0;
+}
+
+#caption.hidden {
+	opacity: 0;
+	transition: opacity 0.5s;
+}
+
+#player {
+	/*position: absolute;
+	top: 37em;*/
+	clear: both;
 }
 
 #player * {
 	display: block;
-	float: right;
+	float: left;
 	background-color: white;
-	padding: 0.5em;
-	margin: 1em 0 0.5em 0.5em;
+	/*padding: 0.5em;*/
+	margin: 0 0.5em 0.5em 0;
 	border-radius: 5px;
 	border: solid 1px #aaa;
-	width: 4em;
+	width: ; /* 4em */
 	text-align: center;
+	overflow: auto;
 }
 
 #player *:hover {
@@ -61,24 +98,13 @@ h1 {
 	background-color: white;
 }
 
-#caption {
-	font-size: x-large;
-	opacity: 1;
-	transition: opacity 0.5s;
-}
-
-#caption.hidden {
-	opacity: 0;
-	transition: opacity 0.5s;
-}
-
 #footer {
 	position: absolute;
 	bottom: 0;
 }
 
 #footer p {
-	font-size: small;
+	font-size: 0.75em;
 	margin: 0;
 }
 
@@ -96,6 +122,24 @@ a:active {
 }
 
 /* ---------- SVG elements - constant properties etc. ------------ */
+
+#player polygon, #player rect {
+	fill: #333;
+	stroke-width: 0;
+}
+
+#player rect.tooltip-area {
+	width: 100%;
+	height: 100%;
+	x: -50%;
+	y: -50%;
+	fill: transparent;
+	stroke: none;
+}
+
+#to-start {
+	display: none;
+}
 
 #graphGrid * {
 	stroke-width: 1;

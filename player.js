@@ -19,11 +19,8 @@ tessellations.load.player = function() {
 			_.playing = false;		
 			_.playQueue = [];
 		
-			t.id('play')
-				.untag('inactive')
-				.html('replay');
-			
-			t.id('stop').tag('inactive');
+			t.svg('to-start').off();
+			t.svg('play').on();
 		}
 	};
 	
@@ -46,8 +43,9 @@ tessellations.load.player = function() {
 			
 				this.start(/*demoIndex*/);
 				this.setCurrentAnimation( t.demo(1 /*demoIndex)*/).animation() );
-				t.id('play').tag('inactive');
-				t.id('stop').untag('inactive');
+				
+				t.svg('to-start').on();
+				t.svg('play').off();
 	
 				// call setTimeout() for each of the scenes,
 				// & store the timeouts in playQueue:
@@ -70,6 +68,7 @@ tessellations.load.player = function() {
 			}
 		
 			t.id('caption').html('');
+			t.id('demo1-title').html('');
 		
 			_.end();
 		}

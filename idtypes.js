@@ -114,7 +114,7 @@ tessellations.load.idTypes = function() {
 				attr: idp.attr,
 		
 				on: function() {
-					this.style('display', '');
+					this.style('display', 'block');
 					return this;
 				},
 		

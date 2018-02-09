@@ -30,7 +30,7 @@
 		(function addPlayerListenersIIFE() {
 
 			t.id('play').listen('click', function() { t.player.play(/*1*/); });
-			t.id('stop').listen('click', t.player.stop);
+			t.id('to-start').listen('click', t.player.stop);
 
 			// eventually need to add listeners for pause/resume, demo 2, home screen, ...
 
