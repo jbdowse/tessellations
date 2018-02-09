@@ -2,27 +2,36 @@
 
 html {
 	font-family: Helvetica, sans-serif;
-	font-size: 16px;
+	/*font-size: 16px;*/
+	height: 100%;
 }
 
 body {
 	background-color: white; /* #eee */
+	height: 100%;
+	margin: 0 auto;
 }
 
-/* @media screen and (max-width: 500px) {
+/*
+@media screen and (max-width: 500px) {
 	html {
 		font-size: 110%;
 	}
-} */
-
-#column {
-	max-width: 650px;
-	margin: 0 auto;
-	overflow: auto;
 }
 
-#portal {
-	overflow: auto;
+@media screen and (max-width: 400px) {
+	html {
+		font-size: 130%;
+	}
+}
+*/
+
+#column {
+	max-width: 670px;
+	margin: 0 auto;
+	height: 100%;
+	/* max-height: 100%; */
+	padding: 0 10px;
 }
 
 h1, #column>p, #drawing, #footer {
@@ -48,10 +57,9 @@ h1 {
 	font-size: 1.5em;
 	opacity: 1;
 	transition: opacity 0.5s;
-	float: left;
 	min-height: 4em;
 	overflow: auto;
-	margin: 0;
+	margin: 0 0 0.25em 0;
 }
 
 #caption.hidden {
@@ -60,51 +68,48 @@ h1 {
 }
 
 #player {
-	/*position: absolute;
-	top: 37em;*/
-	clear: both;
+	width: 100%;
+	overflow: auto;
 }
 
-#player * {
+#player>svg {
 	display: block;
 	float: left;
 	background-color: white;
-	/*padding: 0.5em;*/
-	margin: 0 0.5em 0.5em 0;
+	margin: 0 0.5em 0.5rem 0;
 	border-radius: 5px;
 	border: solid 1px #aaa;
-	width: ; /* 4em */
 	text-align: center;
 	overflow: auto;
 }
 
-#player *:hover {
+#player>svg:hover {
 	background-color: #ddd;
 }
 
-#player *:active {
+#player>svg:active {
 	background-color: #aaa;
 }
 
-.inactive {
-	color: #aaa;
+#player>p {
+	clear: both;
+	margin: 0 0 4rem 0;
+	font-size: 0.8em;
 }
 
-#player *:hover.inactive {
-	background-color: white;
-}
-
-#player *:active.inactive {
-	background-color: white;
+#portal {
+	min-height: 100%;
+	height: auto;
+	margin: 0 0 -3rem 0;
 }
 
 #footer {
-	position: absolute;
-	bottom: 0;
+	height: 3rem;
+	margin: 0;
 }
 
 #footer p {
-	font-size: 0.75em;
+	font-size: 0.8em;
 	margin: 0;
 }
 
@@ -157,11 +162,11 @@ a:active {
 }
 
 .dark {
-	fill: #6ae; /*#577 #568 #60656a #444 #35a #46b #798 #4ae*/
+	fill: #6ae;
 }
 
 .light {
-	fill: #fd7; /*#cda #cde #d0d6d8 #d74 #6dd #cdd #ed9 #fc7*/
+	fill: #fd7;
 }
 
 #orientationTest {

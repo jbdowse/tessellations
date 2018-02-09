@@ -31,6 +31,17 @@
 
 			t.id('play').listen('click', function() { t.player.play(/*1*/); });
 			t.id('to-start').listen('click', t.player.stop);
+			
+			window.addEventListener('keydown', function(k) {
+				if (k.key === " ") {
+					if (t.player.playing()) {
+						t.player.stop();
+					}
+					else {
+						t.player.play();
+					}
+				}
+			})
 
 			// eventually need to add listeners for pause/resume, demo 2, home screen, ...
 
