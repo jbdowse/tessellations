@@ -508,4 +508,19 @@ t('player').pgon('shape', [TL, bumpOut, roPt, bumpIn, BR]);
 // now note that if polygon#shape is already in the markup, just without point defns, could have e.g.:
 t('shape').setPts([TL, bumpOut, ...]);
 
+180611
+various ideas for librarification etc:
+
+- provide lattices as a way to help define tilings etc
+	- a lattice could probably be repd as a closure/method which has basis properties (base point, u vector, v vector, or etc) and computes a point location given u,v coordinate args
+	- provide flexible object-param way to initialize a lattice - would be useful for creating certain kinds, e.g. an equilateral-triangular or square lattice is definable just by a base point and a single vector, or two distinct neighboring points, etc
+
+- want to, if possible, provide ways to make tilings of a given wallpaper group
+	- e.g. given a set of shapes and a wallpaper group of a given lattice, copy the shapes to make the tiling, like the site that (I think) Karen sent link to
+		- but it would be nice to, unlike that site, make it easy to make neat well-behaved tilings, i.e. ones following the usual vertex/edge/face rules
+
+- for tilings, want easy ways to define boundaries of the tilings, as I think considered earlier
+	- e.g. clip at boundary vs. tiles on boundary fully included vs. tiles on boundary excluded
+
+- want to make it easy for equivalent-by-translation animations to be applied to each corresponding tile of a tiling (or a selection of tiles), e.g. each tile simultaneously rotating 90˚ccw around its top left corner
 */
