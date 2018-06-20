@@ -12,22 +12,27 @@ tessellations.build.demo1.shapes = (function buildDemo1Shapes()
 	let built = false;
 	
 	
-	const buildComponent = function()
+	const buildComponent = () =>
 	{
 	
 		t.load
 		.idTypes()
 		.geom();
 		
+		t.initializeDemos();
+		
 		t.build.demo1.points();
 		
 	
-		const svg = t.svg;
-		const pt = t.demo(1).points;
-		const g = t.geom;
+		const
+			svg = t.svg,
+			pt = t.demo(1).points,
+			g = t.geom;
 	
-	
-		(function buildGraphGrid() {
+			
+		// labels + scope blocks instead of IIFEs:
+			
+		buildGraphGrid: {
 
 			g.line('gridlineHoriz', pt.gridTL(), pt.gridTR() );
 			g.line('gridlineVert', pt.gridTL(), pt.gridBL() );
@@ -48,10 +53,10 @@ tessellations.build.demo1.shapes = (function buildDemo1Shapes()
 						'y', 0
 					]);
 			}
-		})();
+		}
 
 
-		(function buildMirrorLine() {
+		buildMirrorLine: {
 
 			const radius = 2 * pt.sqLength();
 			const offsetX = pt.lineCx();
@@ -61,10 +66,10 @@ tessellations.build.demo1.shapes = (function buildDemo1Shapes()
 
 			g.line('mirrorLine', [offsetX, lineStartY], [offsetX, lineEndY]);
 		
-		})();
+		}
 
 
-		(function definePolygonPoints() {
+		definePolygonPoints: {
 
 			g.points('base', [
 				pt.shpTL(),
@@ -109,7 +114,7 @@ tessellations.build.demo1.shapes = (function buildDemo1Shapes()
 				pt.sqTR()
 			]);
 		
-		})();
+		}
 
 	}; // end buildComponent
 	
@@ -135,12 +140,14 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 	let built = false;
 	
 	
-	const buildComponent = function()
+	const buildComponent = () =>
 	{
 		
 		t.load
 		.idTypes()
 		.geom();
+		
+		t.initializeDemos();
 		
 		t.build.demo1
 		.points()
@@ -148,8 +155,6 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 		.patterns();
 		
 		
-	
-		// t.demo(1) & t.demo(1).points assumed to be already initialized
 	
 		t.demo(1).colors = {
 			base: '#36c',
@@ -160,16 +165,17 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 		};
 
 		
-		const svg = t.svg;
-		const pt = t.demo(1).points;
-		const c = t.demo(1).colors;
-		const scaleStr = t.geom.scaleStr;
+		const
+			svg = t.svg,
+			pt = t.demo(1).points,
+			c = t.demo(1).colors,
+			scaleStr = t.geom.scaleStr;
 	
 	
 		t.id('caption').style('transitionTimingFunction', 'linear');
 	
 	
-		(function hideAll() {
+		hideAll: {
 	
 			const allAnimatedShapes = [
 				'graphGrid',
@@ -199,10 +205,10 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 					.initStyle('opacity', 0);
 			}
 		
-		})();
+		}
 	
 	
-		(function setBaseColor() {
+		setBaseColor: {
 		
 			const baseColorShapes = [
 				'base',
@@ -219,10 +225,10 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				svg(id).initStyle('fill', c.base);
 			}
 		
-		})();
+		}
 	
 	
-		(function setRotationPoint() {
+		setRotationPoint: {
 		
 			const BLRotators = [
 				'rotator',
@@ -232,15 +238,16 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				'BRTile'
 			];
 
-			for (const id of BLRotators) {
+			for (const id of BLRotators)
+			{
 				const origin = t.geom.pxPt( pt.shpBL() );
 				svg(id).initStyle('transformOrigin', origin);
 			}
 		
-		})();
+		}
 	
 	
-		(function setSquarePositions() {
+		setSquarePositions: {
 	
 			const laterSquares = [
 				'sq2init',
@@ -248,21 +255,28 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				'sq4flip'
 			];
 	
-			for (let i = 0; i < laterSquares.length; ++i) {
+			for (let i = 0; i < laterSquares.length; ++i)
+			{
 				const xpos = pt.sq4(i + 1);
 				svg(laterSquares[i]).initStyle( 'transform', t.geom.shiftTo(xpos, 0) );
 			}
 		
-		})();
+		}
 	
 	
-		(function setInitialScales() {
+		setInitialScales: {
 	
-			svg('sq4init').initStyle('transform', scaleStr(pt.sqScaleUp(), pt.sqScaleUp()) );
+			svg('sq4init').initStyle(
+				'transform',
+				scaleStr(pt.sqScaleUp(), pt.sqScaleUp())
+			);
 	
-			svg('zoom').initStyle('transform', scaleStr(pt.zoomSmall(), pt.zoomSmall()) );
+			svg('zoom').initStyle(
+				'transform',
+				scaleStr(pt.zoomSmall(), pt.zoomSmall())
+			);
 		
-		})();
+		}
 	
 	}; // end buildComponent
 	

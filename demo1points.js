@@ -5,16 +5,28 @@ tessellations.build = tessellations.build || {};
 tessellations.build.demo1 = tessellations.build.demo1 || {};
 
 
-tessellations.initializeDemos = function()
+tessellations.initializeDemos = (() =>
 {
 	const t = tessellations;
 
-	const _demos = [{}, {}];
+	let initialized = false;
 	
-	t.demo = function(n) {
-		return _demos[n - 1];
+	const init = () =>
+	{
+		const _demos = [{}, {}];
+	
+		t.demo = n => _demos[n - 1];
 	};
-};
+	
+	return function initOnce()
+	{
+		if (! initialized) {
+			init();
+			initialized = true;
+		}
+	};
+	
+})();
 
 
 tessellations.build.demo1.all = function()
@@ -37,28 +49,32 @@ tessellations.build.demo1.points = (function buildDemo1Points()
 	
 	const buildComponent = function()
 	{
+		t.initializeDemos();
+		
 
-		const _SquarePoints = function(rad) {
-	
-			const _start = -rad;
-			const _end = rad;
+		const _SquarePoints = rad => {
+			
+			const _pts = {
+				start: -rad,
+				end: rad,
+			};
 
 			return {
-				start: _start,
-				end: _end,
+				start: _pts.start,
+				end: _pts.end,
 				length: 2*rad,
 				center: [0, 0],
-				TL: [_start, _start],
-				TR: [_end, _start],
-				BL: [_start, _end],
-				BR: [_end, _end],		
+				TL: [_pts.start, _pts.start],
+				TR: [_pts.end, _pts.start],
+				BL: [_pts.start, _pts.end],
+				BR: [_pts.end, _pts.end],		
 			};
 		};
 
 
-		// points/counts/lengths for initial-construction shapes;
-		const _shp = (function shpIIFE() {
-	
+		// points/counts/lengths for initial-construction shapes:
+		const _shp = (() =>
+		{
 			const s = _SquarePoints(64);
 
 			s.gridSubdivs = 4;
@@ -72,11 +88,11 @@ tessellations.build.demo1.points = (function buildDemo1Points()
 
 
 		// points/counts for pattern squares:
-		const _sq = (function sqIIFE() {
-	
-			const s = _SquarePoints(32);
-	
-			const _bump = s.length/8;
+		const _sq = (() =>
+		{
+			const
+				s = _SquarePoints(32),
+				_bump = s.length/8;
 	
 			s.TLBump = [s.start + _bump, -_bump];
 			s.TRBump = [_bump, s.start + _bump];
@@ -89,26 +105,27 @@ tessellations.build.demo1.points = (function buildDemo1Points()
 
 
 		// other values for patterns:
-		const _pat = (function patIIFE() {
-	
-			const _sqsPerSide = 3;
-			const _gutter = 16;
-	
-			return {
-				gutter: _gutter, // px
-				sqsPerSide: _sqsPerSide,
-				shift: _sq.length * _sqsPerSide + _gutter,
+		const _pat = (() =>
+		{
+			const p = {
+				sqsPerSide: 3,
+				gutter: 16, // px
 			};
+			
+			p.shift = _sq.length * p.sqsPerSide + p.gutter;
+	
+			return p;
 	
 		})();
 
 
 		// positions offset by 0.5px for lines:
-		const _line = (function lineIIFE() {
+		const _line = (() => {
 	
-			const _offset = 0.5;
-			const _gridStart = _shp.start + _offset;
-			const _gridEnd = _shp.end + _offset;
+			const
+				_offset = 0.5,
+				_gridStart = _shp.start + _offset,
+				_gridEnd = _shp.end + _offset;
 	
 			return {
 				cx: _offset,
@@ -121,52 +138,56 @@ tessellations.build.demo1.points = (function buildDemo1Points()
 		})();
 	
 	
+	
 		t.demo(1).points = {
 
 			// for shapes/squares/patterns:
 
-			center: function() { return _shp.center; },
+			center: () => _shp.center,
 
-			shpTL: function() { return _shp.TL; },
-			shpBL: function() { return _shp.BL; },
-			shpBR: function() { return _shp.BR; },
-			shpBtmBump: function() { return _shp.btmBump; },
-			shpLeftBump: function() { return _shp.leftBump; },
-			gridSubdivs: function() { return _shp.gridSubdivs; },
-			gridCell: function() { return _shp.gridCell; },
+			shpTL: () => _shp.TL,
+			shpBL: () => _shp.BL,
+			shpBR: () => _shp.BR,
+			shpBtmBump: () => _shp.btmBump,
+			shpLeftBump: () => _shp.leftBump,
+			gridSubdivs: () => _shp.gridSubdivs,
+			gridCell: () => _shp.gridCell,
 
-			sqTL: function() { return _sq.TL; },
-			sqTR: function() { return _sq.TR; },
-			sqBR: function() { return _sq.BR; },
-			sqTLBump: function() { return _sq.TLBump; },
-			sqTRBump: function() { return _sq.TRBump; },
-			sqBRBump: function() { return _sq.BRBump; },
-			sqLength: function() { return _sq.length; },
+			sqTL: () => _sq.TL,
+			sqTR: () => _sq.TR,
+			sqBR: () => _sq.BR,
+			sqTLBump: () => _sq.TLBump,
+			sqTRBump: () => _sq.TRBump,
+			sqBRBump: () => _sq.BRBump,
+			sqLength: () => _sq.length,
 
-			lineCx: function() { return _line.cx; },
-			lineCy: function() { return _line.cy; },
-			gridTL: function() { return _line.gridTL; },
-			gridTR: function() { return _line.gridTR; },
-			gridBL: function() { return _line.gridBL; },
+			lineCx: () => _line.cx,
+			lineCy: () => _line.cy,
+			gridTL: () => _line.gridTL,
+			gridTR: () => _line.gridTR,
+			gridBL: () => _line.gridBL,
 
-			sqsPerSide: function() { return _pat.sqsPerSide; },
-			patShift: function() { return _pat.shift; },
+			sqsPerSide: () => _pat.sqsPerSide,
+			patShift: () => _pat.shift,
 
 			// accessors/functions for transforms:
 
-			rotX: function() { return _shp.start; },
-			rotY: function() { return _shp.end; },
-			sqScaleUp: function() { return _sq.scaleUp; },
-			zoomSmall: function() { return 1/64; },
-			zoomLarge: function() { return 2; },
+			rotX: () => _shp.start,
+			rotY: () => _shp.end,
+			sqScaleUp: () => _sq.scaleUp,
+			zoomSmall: () => 1/64,
+			zoomLarge: () => 2,
 
-			sq4: function(n) {
-				const zero_dist = -3 * _sq.length;
-				const unit_dist = 2 * _sq.length;
+			sq4: n =>
+			{
+				const
+					zero_dist = -3 * _sq.length,
+					unit_dist = 2 * _sq.length;
+					
 				return zero_dist + n * unit_dist;
 			},
 
-			sq3: function(n) {
+			sq3: n => {
 				const zero_dist = -_pat.shift;
 				return zero_dist + n * _pat.shift;
 			},

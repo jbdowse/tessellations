@@ -10,43 +10,54 @@ tessellations.load.player = (function loadPlayer()
 	
 	let loaded = false;
 	
-	const loadModule = function()
+	const loadModule = () =>
 	{
 		t.load
 		.idTypes()
 		.animation();
 		
 
-		const _ = {
+		const _st = { // "state"
 	
 			currentAnimation: null,
 			playQueue: [],
 			playing: false,
 			paused: false,
-	
+			
+			// keeping function() in case use (this) instead of _st
 			end: function() {
-				_.playing = false;		
-				_.playQueue = [];
+				_st.playing = false;		
+				_st.playQueue = [];
 		
 				t.svg('to-start').off();
 				t.svg('play').on();
-			}
+			},
 		};
 	
 	
 		t.player = {
-		
-			currentAnimation: function() { return _.currentAnimation; },
-			playQueue: function() { return _.playQueue; },
-			setCurrentAnimation: function(animation) { _.currentAnimation = animation; },
-			playing: function() { return _.playing && ! _.paused; },
-			paused: function() { return _.playing && _.paused; },
-			stopped: function() { return ! _.playing; },
+			
+			// using => wherever (this) not used
+			
+			currentAnimation: () => _st.currentAnimation,
+			
+			playQueue: () => _st.playQueue,
+			
+			setCurrentAnimation: animation => { _st.currentAnimation = animation; },
+			
+			playing: () => _st.playing && ! _st.paused,
+			
+			paused: () => _st.playing && _st.paused,
+			
+			stopped: () => ! _st.playing,
 
-			start: function(/*demoIndex*/) { _.playing = true; },
-			end: _.end, // used for stop() & at end of demos
-			pause: function() { _.paused = true; }, //...
-			resume: function() { _.paused = false; }, //...
+			start: (/*demoIndex*/) => { _st.playing = true; },
+			
+			end: _st.end, // used for stop() & at end of demos
+			
+			pause: () => { _st.paused = true; }, //...
+			
+			resume: () => { _st.paused = false; }, //...
 			
 			
 			play: function(/*demoIndex*/)
@@ -61,7 +72,9 @@ tessellations.load.player = (function loadPlayer()
 	
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
-					for (const action of this.currentAnimation().actions() ) {
+					
+					for (const action of this.currentAnimation().actions() )
+					{
 						this.playQueue().push( action() );
 					}
 				}
@@ -72,27 +85,30 @@ tessellations.load.player = (function loadPlayer()
 			{
 				// for some reason "this" doesn't work here though it does at play()
 					
-				for (const timeout of _.playQueue ) {
+				for (const timeout of _st.playQueue ) {
 					window.clearTimeout(timeout);
 				}
 		
-				for (const shape of _.currentAnimation.animatedElements() ) {
+				for (const shape of _st.currentAnimation.animatedElements() ) {
 					t.svg(shape).reset();
 				}
 		
 				t.id('caption').html('');
 				t.id('demo1-title').html('');
 		
-				_.end();
+				_st.end();
 			},
 			
 			
 			addListeners: function()
 			{
-				t.id('play').listen('click', function() { t.player.play(/*1*/); });
+				t.id('play').listen('click', () => {
+					t.player.play(/*1*/);
+				});
+				
 				t.id('to-start').listen('click', t.player.stop);
 		
-				window.addEventListener('keydown', function(k)
+				window.addEventListener('keydown', k =>
 				{
 					if (k.key === " ") {
 						if (t.player.playing()) {

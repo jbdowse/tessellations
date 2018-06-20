@@ -12,12 +12,13 @@ tessellations.build.demo1.animation = (function buildDemo1Animation()
 	let built = false;
 	
 	
-	const buildComponent = function()
+	const buildComponent = () =>
 	{
-		// t.demo(1), t.demo(1).points, t.demo(1).colors assumed to be already initialized
 		t.load
 		.geom()
 		.animation();
+		
+		t.initializeDemos();
 		
 		t.build.demo1
 		.points()
@@ -26,10 +27,11 @@ tessellations.build.demo1.animation = (function buildDemo1Animation()
 		.styles();
 		
 
-		const pt = t.demo(1).points;
-		const c = t.demo(1).colors;
-		const shiftTo = t.geom.shiftTo;
-		const scaleStr = t.geom.scaleStr;
+		const
+			pt = t.demo(1).points,
+			c = t.demo(1).colors,
+			shiftTo = t.geom.shiftTo,
+			scaleStr = t.geom.scaleStr;
 
 
 		const a = t.animation();
@@ -151,9 +153,7 @@ tessellations.build.demo1.animation = (function buildDemo1Animation()
 		.end(); // call t.player.end()
 
 	
-		t.demo(1).animation = function() {
-			return a;
-		};
+		t.demo(1).animation = () => a;
 	
 	}; // end buildComponent
 

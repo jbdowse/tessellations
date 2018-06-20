@@ -10,7 +10,8 @@ tessellations.load.idTypes = (function loadIdTypes()
 	
 	let loaded = false;
 	
-	const loadModule = function() {	
+	const loadModule = () =>
+	{	
 	
 		/* tess.svg(idStr) & tess.id(idStr) both return
 		wrapped document element with ID idStr, with chainable
@@ -22,7 +23,7 @@ tessellations.load.idTypes = (function loadIdTypes()
 		.buildType();
 
 
-		const _setAttrs = function(element, attrList)
+		const _setAttrs = (element, attrList) =>
 		{
 			for (let i = 0; i < attrList.length; i += 2)
 			{
@@ -88,27 +89,31 @@ tessellations.load.idTypes = (function loadIdTypes()
 					// console.log('style(): ' + this.id() + ' ' + property + ' changed to ' + value);
 					return this;
 				},
-			},
+				
+			}, // end _id.proto
 		
 		
-			addInstanceVars: function(newObj, idStr)
+			addInstanceVars: (newObj, idStr) =>
 			{
 				newObj._id = idStr;
 				newObj._element = document.getElementById(idStr);
 			},
 		
-		};
+		}; // end _id
 	
 	
 		const _svg = {
 
-			proto: (function svgProto() {
+			proto: (function svgProto()
+			{
 	
-				const svgNS = 'http://www.w3.org/2000/svg';
-				const idp = _id.proto;
-				const ar = t.arrays;
+				const
+					svgNS = 'http://www.w3.org/2000/svg',
+					idp = _id.proto,
+					ar = t.arrays;
 	
-				return {
+	
+				const _svgProto = {
 		
 					id: idp.id,
 
@@ -142,10 +147,16 @@ tessellations.load.idTypes = (function loadIdTypes()
 					// need to make _initialStyles = [] an instance var:
 					addInitialStyleIfNew: function(prop, val)
 					{
-						const propIndex = ar.indexOfKey(this.initialStyles(), 'property', prop);
+						const propIndex = ar.indexOfKey(
+							this.initialStyles(), 'property', prop);
+						
 						const propIsNew = (-1 === propIndex);
 			
-						ar.addIfPredicate(this._initialStyles, {property: prop, value: val}, propIsNew);
+						ar.addIfPredicate(
+							this._initialStyles,
+							{property: prop, value: val},
+							propIsNew
+						);
 				
 						return this;
 					},
@@ -155,19 +166,22 @@ tessellations.load.idTypes = (function loadIdTypes()
 					{
 						this.addInitialStyleIfNew(prop, val)
 							.style(prop, val);
+							
 						return this;
 					},
 		
 		
 					reset: function()
 					{
-						for (const initialStyle of this.initialStyles() ) {
+						for (const initialStyle of this.initialStyles() )
+						{
 							this.style(initialStyle.property, initialStyle.value);
 						}
 			
-						this.style('display', 'none')
-							.style('transitionProperty', '')
-							.style('transitionDuration', '');
+						this
+						.style('display', 'none')
+						.style('transitionProperty', '')
+						.style('transitionDuration', '');
 			
 						return this;
 					},
@@ -209,15 +223,19 @@ tessellations.load.idTypes = (function loadIdTypes()
 					},
 					
 				};
+				
+				
+				return _svgProto;
 	
-			})(), // end svgProto
+			})(), // end _svg.proto
 		
 	
-			addInstanceVars: function(newObj, idStr) {
+			addInstanceVars: (newObj, idStr) => {
 				_id.addInstanceVars(newObj, idStr);
 				newObj._initialStyles = [];
 			},
-		};
+			
+		}; // end _svg
 	
 	
 		t.id = t.buildType.cachingIdType(_id);
@@ -251,7 +269,7 @@ tessellations.load.geom = (function loadGeom()
 
 		t.geom = {
 
-			points: function(idStr, pointList)
+			points: (idStr, pointList) =>
 			{
 				t.svg(idStr).attr([
 					'points', t.geom.ptStr(pointList)
@@ -259,7 +277,7 @@ tessellations.load.geom = (function loadGeom()
 			},
 			
 
-			line: function(idStr, point0, point1)
+			line: (idStr, point0, point1) =>
 			{
 				t.svg(idStr).attr([
 					'x1', point0[0],
@@ -272,7 +290,7 @@ tessellations.load.geom = (function loadGeom()
 
 			/* convert arrays of point pairs i.e. [[x1,y1], [x2,y2], ...]
 				to conventional SVG "x1,y1 x2,y2 ..." format */
-			ptStr: function(ptList)
+			ptStr: ptList =>
 			{
 				let str = '';
 
@@ -285,17 +303,11 @@ tessellations.load.geom = (function loadGeom()
 			},			
 		
 
-			pxPt: function(point) {
-				return point[0] + 'px ' + point[1] + 'px';
-			},
+			pxPt: point => point[0] + 'px ' + point[1] + 'px',
 
-			shiftTo: function(x, y) {
-				return 'translate(' + x + 'px, ' + y + 'px)';
-			},
+			shiftTo: (x, y) => 'translate(' + x + 'px, ' + y + 'px)',
 		
-			scaleStr: function(x, y) {
-				return 'scale(' + x + ', ' + y + ')';
-			},
+			scaleStr: (x, y) => 'scale(' + x + ', ' + y + ')',
 		};	
 
 	}; // end loadModule

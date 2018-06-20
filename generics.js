@@ -3,7 +3,7 @@
 var tessellations = tessellations || {};
 tessellations.load = tessellations.load || {};
 
-tessellations.load.allModules = function()
+tessellations.load.allModules = () =>
 {
 	tessellations.load
 	.arrays()
@@ -22,53 +22,42 @@ tessellations.load.arrays = (function loadArrays()
 	let loaded = false;
 	
 	
-	const loadModule = function()
+	const loadModule = () =>
 	{
-
+		// using arrows here bc no use of (this)
+		
 		t.arrays = {
 
 
-			lift: function(x) {
-				return Array.isArray(x)? x : [x];
-			},
+			lift: x => Array.isArray(x)? x : [x],
 
 
-			arrayMax: function(arr) {
-				return Array.isArray(arr) ?
-					arr.reduce(function(a, b) {
-						return Math.max(a, b);
-					}) :
-					arr;
-			},
+			arrayMax: arr => Array.isArray(arr) ?
+				arr.reduce((a, b) => Math.max(a, b)) :
+				arr,
 
 
-			csv: function(arr) {
-				let str = '';
-				const lastElement = arr[arr.length - 1];
-				const allButLast = arr.slice(0,-1)
-				for (const element of allButLast) {
-					str += element + ', ';
-				}
-				str += lastElement;
-				return str;
-			},
+			csv: arr => arr.join(', '),
 
 
-			addIfNew: function(arr, element) {
+			addIfNew: (arr, element) =>
+			{
 				if (arr.indexOf(element) === -1) {
 					arr.push(element);
 				}
 			},
 
 
-			addIfPredicate: function(arr, element, predicate) {
+			addIfPredicate: (arr, element, predicate) =>
+			{
 				if (predicate) {
 					arr.push(element);
 				}
 			},
 
 
-			indexOfKey: function(arr, key, value) {
+			indexOfKey: (arr, key, value) =>
+			{
 				for (let i = 0; i < arr.length; ++i) {
 					if (arr[i][key] === value) {
 						return i;
@@ -78,7 +67,8 @@ tessellations.load.arrays = (function loadArrays()
 			},
 	
 	
-			findByKey: function(arr, key, value) {
+			findByKey: (arr, key, value) =>
+			{
 				for (let i = 0; i < arr.length; ++i) {
 					if (arr[i][key] === value) {
 						return arr[i];
@@ -114,55 +104,57 @@ tessellations.load.buildType = (function loadBuildType()
 	let loaded = false;
 	
 	
-	const loadModule = function()
+	const loadModule = () =>
 	{
 		t.load.arrays();
 		
 
-		const _copyPrototypeFields = function(proto) {
+		const _copyPrototypeFields = proto =>
+		{
 			const newObj = {};
+			
 			for (const key in proto) {
 				newObj[key] = proto[key];
 			}
+			
 			return newObj;		
 		};
 
 
 		t.buildType = {
 	
-			basic: function(type)
-			{
-				return function basicCreateObject()
-				{
-					let newObj = _copyPrototypeFields(type.proto);
+			basic: type => (
+				() => {
+					const newObj = _copyPrototypeFields(type.proto);
 					type.addInstanceVars(newObj);
 					return newObj;
 				}
-			},
+			),
 
 
-			cachingIdType: function(type)
-			{
-				return (function cachingIdObjectAccess()
+			cachingIdType: type => (
+				(() =>
 				{
 					const cache = []; // private, shared by entire type ("static")
 
-					function createObject(idStr)
+					const createObject = idStr =>
 					{
-						let newObj = _copyPrototypeFields(type.proto);
+						const newObj = _copyPrototypeFields(type.proto);
 						type.addInstanceVars(newObj, idStr);
 						cache.push(newObj);
 				    	return newObj;
 					};
 
-					return function getOrCreate(idStr)
+					const getOrCreate = idStr =>
 					{
 						const cachedObj = t.arrays.findByKey(cache, '_id', idStr);
 						return cachedObj || createObject(idStr);
 					};
+					
+					return getOrCreate;
 				
-				})();
-			},
+				})()
+			),
 		};
 		
 	}; // end loadModule
