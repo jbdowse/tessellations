@@ -45,30 +45,22 @@ tessellations.load.animation = function loadAnimation() {
 				},
 
 				addAnyInitialStylesIfChanging: function addAnyInitialStylesIfChanging(idStr, props) {
-					var _iteratorNormalCompletion = true;
-					var _didIteratorError = false;
-					var _iteratorError = undefined;
+					for (var _iterator = props, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+						var _ref;
 
-					try {
-						for (var _iterator = props[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-							var prop = _step.value;
+						if (_isArray) {
+							if (_i >= _iterator.length) break;
+							_ref = _iterator[_i++];
+						} else {
+							_i = _iterator.next();
+							if (_i.done) break;
+							_ref = _i.value;
+						}
 
-							var shape = svg(idStr);
-							shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
-						}
-					} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion && _iterator.return) {
-								_iterator.return();
-							}
-						} finally {
-							if (_didIteratorError) {
-								throw _iteratorError;
-							}
-						}
+						var prop = _ref;
+
+						var shape = svg(idStr);
+						shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
 					}
 				},
 
@@ -127,37 +119,29 @@ tessellations.load.animation = function loadAnimation() {
 			to: function to(idStrs, properties, newValues, transTimes) {
 				var ids = ar.lift(idStrs);
 
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
+				for (var _iterator2 = ids, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+					var _ref2;
 
-				try {
-					for (var _iterator2 = ids[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-						var id = _step2.value;
-
-						this.addElementIfNew(id);
-
-						this.transition({
-							start: this.elapsedTime(),
-							id: id,
-							props: properties,
-							vals: newValues,
-							transTimes: transTimes
-						});
+					if (_isArray2) {
+						if (_i2 >= _iterator2.length) break;
+						_ref2 = _iterator2[_i2++];
+					} else {
+						_i2 = _iterator2.next();
+						if (_i2.done) break;
+						_ref2 = _i2.value;
 					}
-				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
-						}
-					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
-						}
-					}
+
+					var id = _ref2;
+
+					this.addElementIfNew(id);
+
+					this.transition({
+						start: this.elapsedTime(),
+						id: id,
+						props: properties,
+						vals: newValues,
+						transTimes: transTimes
+					});
 				}
 
 				var maxTime = ar.arrayMax(transTimes);
@@ -170,87 +154,63 @@ tessellations.load.animation = function loadAnimation() {
 				var transTime = optTransTime || 0,
 				    idSet = ar.lift(idStrs);
 
-				var _iteratorNormalCompletion3 = true;
-				var _didIteratorError3 = false;
-				var _iteratorError3 = undefined;
+				for (var _iterator3 = idSet, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+					var _ref3;
 
-				try {
-					for (var _iterator3 = idSet[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-						var id = _step3.value;
+					if (_isArray3) {
+						if (_i3 >= _iterator3.length) break;
+						_ref3 = _iterator3[_i3++];
+					} else {
+						_i3 = _iterator3.next();
+						if (_i3.done) break;
+						_ref3 = _i3.value;
+					}
 
-						this.addElementIfNew(id);
-					}
-				} catch (err) {
-					_didIteratorError3 = true;
-					_iteratorError3 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion3 && _iterator3.return) {
-							_iterator3.return();
-						}
-					} finally {
-						if (_didIteratorError3) {
-							throw _iteratorError3;
-						}
-					}
+					var id = _ref3;
+
+					this.addElementIfNew(id);
 				}
 
 				this.enqueue(function () {
-					var _iteratorNormalCompletion4 = true;
-					var _didIteratorError4 = false;
-					var _iteratorError4 = undefined;
+					for (var _iterator4 = idSet, _isArray4 = Array.isArray(_iterator4), _i4 = 0, _iterator4 = _isArray4 ? _iterator4 : _iterator4[Symbol.iterator]();;) {
+						var _ref4;
 
-					try {
-						for (var _iterator4 = idSet[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-							var _id = _step4.value;
+						if (_isArray4) {
+							if (_i4 >= _iterator4.length) break;
+							_ref4 = _iterator4[_i4++];
+						} else {
+							_i4 = _iterator4.next();
+							if (_i4.done) break;
+							_ref4 = _i4.value;
+						}
 
-							svg(_id).on();
-						}
-					} catch (err) {
-						_didIteratorError4 = true;
-						_iteratorError4 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion4 && _iterator4.return) {
-								_iterator4.return();
-							}
-						} finally {
-							if (_didIteratorError4) {
-								throw _iteratorError4;
-							}
-						}
+						var id = _ref4;
+
+						svg(id).on();
 					}
 				}, this.elapsedTime());
 
-				var _iteratorNormalCompletion5 = true;
-				var _didIteratorError5 = false;
-				var _iteratorError5 = undefined;
+				for (var _iterator5 = idSet, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
+					var _ref5;
 
-				try {
-					for (var _iterator5 = idSet[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-						var _id2 = _step5.value;
+					if (_isArray5) {
+						if (_i5 >= _iterator5.length) break;
+						_ref5 = _iterator5[_i5++];
+					} else {
+						_i5 = _iterator5.next();
+						if (_i5.done) break;
+						_ref5 = _i5.value;
+					}
 
-						this.transition({
-							start: this.elapsedTime(),
-							id: _id2,
-							props: 'opacity',
-							vals: 1,
-							transTimes: transTime
-						});
-					}
-				} catch (err) {
-					_didIteratorError5 = true;
-					_iteratorError5 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion5 && _iterator5.return) {
-							_iterator5.return();
-						}
-					} finally {
-						if (_didIteratorError5) {
-							throw _iteratorError5;
-						}
-					}
+					var _id = _ref5;
+
+					this.transition({
+						start: this.elapsedTime(),
+						id: _id,
+						props: 'opacity',
+						vals: 1,
+						transTimes: transTime
+					});
 				}
 
 				this.wait(transTime);
@@ -263,65 +223,49 @@ tessellations.load.animation = function loadAnimation() {
 				var transTime = optTransTime || 0,
 				    idSet = ar.lift(idStrs);
 
-				var _iteratorNormalCompletion6 = true;
-				var _didIteratorError6 = false;
-				var _iteratorError6 = undefined;
+				for (var _iterator6 = idSet, _isArray6 = Array.isArray(_iterator6), _i6 = 0, _iterator6 = _isArray6 ? _iterator6 : _iterator6[Symbol.iterator]();;) {
+					var _ref6;
 
-				try {
-					for (var _iterator6 = idSet[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-						var id = _step6.value;
-
-						this.addElementIfNew(id);
-
-						this.transition({
-							start: this.elapsedTime(),
-							id: id,
-							props: 'opacity',
-							vals: 0,
-							transTime: transTime
-						});
+					if (_isArray6) {
+						if (_i6 >= _iterator6.length) break;
+						_ref6 = _iterator6[_i6++];
+					} else {
+						_i6 = _iterator6.next();
+						if (_i6.done) break;
+						_ref6 = _i6.value;
 					}
-				} catch (err) {
-					_didIteratorError6 = true;
-					_iteratorError6 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion6 && _iterator6.return) {
-							_iterator6.return();
-						}
-					} finally {
-						if (_didIteratorError6) {
-							throw _iteratorError6;
-						}
-					}
+
+					var id = _ref6;
+
+					this.addElementIfNew(id);
+
+					this.transition({
+						start: this.elapsedTime(),
+						id: id,
+						props: 'opacity',
+						vals: 0,
+						transTime: transTime
+					});
 				}
 
 				this.wait(transTime);
 
 				this.enqueue(function () {
-					var _iteratorNormalCompletion7 = true;
-					var _didIteratorError7 = false;
-					var _iteratorError7 = undefined;
+					for (var _iterator7 = idSet, _isArray7 = Array.isArray(_iterator7), _i7 = 0, _iterator7 = _isArray7 ? _iterator7 : _iterator7[Symbol.iterator]();;) {
+						var _ref7;
 
-					try {
-						for (var _iterator7 = idSet[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-							var _id3 = _step7.value;
+						if (_isArray7) {
+							if (_i7 >= _iterator7.length) break;
+							_ref7 = _iterator7[_i7++];
+						} else {
+							_i7 = _iterator7.next();
+							if (_i7.done) break;
+							_ref7 = _i7.value;
+						}
 
-							svg(_id3).off();
-						}
-					} catch (err) {
-						_didIteratorError7 = true;
-						_iteratorError7 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion7 && _iterator7.return) {
-								_iterator7.return();
-							}
-						} finally {
-							if (_didIteratorError7) {
-								throw _iteratorError7;
-							}
-						}
+						var id = _ref7;
+
+						svg(id).off();
 					}
 				}, this.elapsedTime());
 
@@ -375,31 +319,22 @@ tessellations.load.animation = function loadAnimation() {
 				// this in inner arrow fn should refer to this object:
 
 				this.enqueue(function () {
-					var _iteratorNormalCompletion8 = true;
-					var _didIteratorError8 = false;
-					var _iteratorError8 = undefined;
+					for (var _iterator8 = _this.animatedElements(), _isArray8 = Array.isArray(_iterator8), _i8 = 0, _iterator8 = _isArray8 ? _iterator8 : _iterator8[Symbol.iterator]();;) {
+						var _ref8;
 
-					try {
-						for (var _iterator8 = _this.animatedElements()[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-							var element = _step8.value;
+						if (_isArray8) {
+							if (_i8 >= _iterator8.length) break;
+							_ref8 = _iterator8[_i8++];
+						} else {
+							_i8 = _iterator8.next();
+							if (_i8.done) break;
+							_ref8 = _i8.value;
+						}
 
-							svg(element).reset();
-						}
-					} catch (err) {
-						_didIteratorError8 = true;
-						_iteratorError8 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion8 && _iterator8.return) {
-								_iterator8.return();
-							}
-						} finally {
-							if (_didIteratorError8) {
-								throw _iteratorError8;
-							}
-						}
+						var element = _ref8;
+
+						svg(element).reset();
 					}
-
 					t.player.end();
 				}, this.elapsedTime());
 

@@ -85,29 +85,21 @@ tessellations.load.player = function loadPlayer() {
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
 
-					var _iteratorNormalCompletion = true;
-					var _didIteratorError = false;
-					var _iteratorError = undefined;
+					for (var _iterator = this.currentAnimation().actions(), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+						var _ref;
 
-					try {
-						for (var _iterator = this.currentAnimation().actions()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-							var action = _step.value;
+						if (_isArray) {
+							if (_i >= _iterator.length) break;
+							_ref = _iterator[_i++];
+						} else {
+							_i = _iterator.next();
+							if (_i.done) break;
+							_ref = _i.value;
+						}
 
-							this.playQueue().push(action());
-						}
-					} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion && _iterator.return) {
-								_iterator.return();
-							}
-						} finally {
-							if (_didIteratorError) {
-								throw _iteratorError;
-							}
-						}
+						var action = _ref;
+
+						this.playQueue().push(action());
 					}
 				}
 			},
@@ -115,54 +107,38 @@ tessellations.load.player = function loadPlayer() {
 			stop: function stop() {
 				// for some reason "this" doesn't work here though it does at play()
 
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
+				for (var _iterator2 = _st.playQueue, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+					var _ref2;
 
-				try {
-					for (var _iterator2 = _st.playQueue[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-						var timeout = _step2.value;
+					if (_isArray2) {
+						if (_i2 >= _iterator2.length) break;
+						_ref2 = _iterator2[_i2++];
+					} else {
+						_i2 = _iterator2.next();
+						if (_i2.done) break;
+						_ref2 = _i2.value;
+					}
 
-						window.clearTimeout(timeout);
-					}
-				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
-						}
-					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
-						}
-					}
+					var timeout = _ref2;
+
+					window.clearTimeout(timeout);
 				}
 
-				var _iteratorNormalCompletion3 = true;
-				var _didIteratorError3 = false;
-				var _iteratorError3 = undefined;
+				for (var _iterator3 = _st.currentAnimation.animatedElements(), _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+					var _ref3;
 
-				try {
-					for (var _iterator3 = _st.currentAnimation.animatedElements()[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-						var shape = _step3.value;
+					if (_isArray3) {
+						if (_i3 >= _iterator3.length) break;
+						_ref3 = _iterator3[_i3++];
+					} else {
+						_i3 = _iterator3.next();
+						if (_i3.done) break;
+						_ref3 = _i3.value;
+					}
 
-						t.svg(shape).reset();
-					}
-				} catch (err) {
-					_didIteratorError3 = true;
-					_iteratorError3 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion3 && _iterator3.return) {
-							_iterator3.return();
-						}
-					} finally {
-						if (_didIteratorError3) {
-							throw _iteratorError3;
-						}
-					}
+					var shape = _ref3;
+
+					t.svg(shape).reset();
 				}
 
 				t.id('caption').html('');
