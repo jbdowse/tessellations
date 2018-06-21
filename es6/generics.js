@@ -1,37 +1,23 @@
 // Type builders + array functions
 
 var tessellations = tessellations || {};
-tessellations.load = tessellations.load || {};
 
-tessellations.load.allModules = () =>
+
+tessellations.arrays = (function getArrays()
 {
-	tessellations.load
-	.arrays()
-	.buildType()
-	.idTypes()
-	.geom()
-	.animation()
-	.player();
-};
-
-
-tessellations.load.arrays = (function loadArrays()
-{
-	const t = tessellations;
 	
-	let loaded = false;
-	
-	
-	const loadModule = () =>
-	{
-		// using arrows here bc no use of (this)
+	const unit = {
 		
-		t.arrays = {
-
-
+		isLoaded: false,
+		
+		contents: null,
+		
+		
+		build: () => ({
+			
 			lift: x => Array.isArray(x)? x : [x],
-			
-			
+	
+	
 			forEachOf: (arr, func) =>
 			{
 				for (let i = 0; i < arr.length; ++i)
@@ -39,7 +25,16 @@ tessellations.load.arrays = (function loadArrays()
 					func(arr[i]);
 				}
 			},
-
+			
+			
+			forCount: (count, func) =>
+			{
+				for (let i = 0; i < count; ++i)
+				{
+					func(i);
+				}
+			},
+	
 
 			arrayMax: arr => Array.isArray(arr) ?
 				arr.reduce((a, b) => Math.max(a, b)) :
@@ -86,97 +81,103 @@ tessellations.load.arrays = (function loadArrays()
 				return null;
 			},
 			
-		};
+		}), // end build
 		
 		
-	};
+		loadOnce: () =>
+		{
+			if (! unit.isLoaded) {
+				unit.contents = unit.build();
+				unit.isLoaded = true;
+			}
+			
+			return unit.contents;
+		},
+		
+	}; // end unit
 	
 	
-	return function loadOnce()
-	{
-		if (! loaded) {
-			loadModule();
-			loaded = true;
-		}
-	
-		return t.load;
-	};
+	return unit.loadOnce;
 	
 })();
 
 
 
-tessellations.load.buildType = (function loadBuildType()
+tessellations.buildType = (function getBuildType()
 {
-	const t = tessellations;
-	
-	let loaded = false;
-	
-	
-	const loadModule = () =>
-	{
-		t.load.arrays();
+	const unit = {
 		
-
-		const _copyPrototypeFields = proto =>
-		{
-			const newObj = {};
+		isLoaded: false,
+		
+		contents: null,
+		
+		build: () => {
 			
-			for (const key in proto) {
-				newObj[key] = proto[key];
+			const ar = tessellations.arrays();
+			
+			const _copyPrototypeFields = proto =>
+			{
+				const newObj = {};
+			
+				for (const key in proto) {
+					newObj[key] = proto[key];
+				}
+			
+				return newObj;		
+			};
+
+
+			return {
+	
+				basic: type =>
+					() => {
+						const newObj = _copyPrototypeFields(type.proto);
+						type.addInstanceVars(newObj);
+						return newObj;
+					},
+
+
+				cachingIdType: type =>
+					(() => {
+						
+						const cache = []; // private, shared by entire type ("static")
+
+						const createObject = idStr =>
+						{
+							const newObj = _copyPrototypeFields(type.proto);
+							type.addInstanceVars(newObj, idStr);
+							cache.push(newObj);
+					    	return newObj;
+						};
+
+						const getOrCreate = idStr =>
+						{
+							const cachedObj = ar.findByKey(cache, '_id', idStr);
+							return cachedObj || createObject(idStr);
+						};
+					
+						return getOrCreate;
+				
+					})(),
+					
+			}; // end build return obj
+			
+		}, // end build
+		
+		
+		loadOnce: () =>
+		{
+			if (! unit.isLoaded) {
+				unit.contents = unit.build();
+				unit.isLoaded = true;
 			}
 			
-			return newObj;		
-		};
-
-
-		t.buildType = {
-	
-			basic: type => (
-				() => {
-					const newObj = _copyPrototypeFields(type.proto);
-					type.addInstanceVars(newObj);
-					return newObj;
-				}
-			),
-
-
-			cachingIdType: type => (
-				(() =>
-				{
-					const cache = []; // private, shared by entire type ("static")
-
-					const createObject = idStr =>
-					{
-						const newObj = _copyPrototypeFields(type.proto);
-						type.addInstanceVars(newObj, idStr);
-						cache.push(newObj);
-				    	return newObj;
-					};
-
-					const getOrCreate = idStr =>
-					{
-						const cachedObj = t.arrays.findByKey(cache, '_id', idStr);
-						return cachedObj || createObject(idStr);
-					};
-					
-					return getOrCreate;
-				
-				})()
-			),
-		};
+			return unit.contents;
+		},
 		
-	}; // end loadModule
+	}; // end unit
 	
 	
-	return function loadOnce()
-	{
-		if (! loaded) {
-			loadModule();
-			loaded = true;
-		}
-	
-		return t.load;
-	};
+	return unit.loadOnce;
 	
 })();

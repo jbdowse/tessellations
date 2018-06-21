@@ -3,142 +3,160 @@
 // Type builders + array functions
 
 var tessellations = tessellations || {};
-tessellations.load = tessellations.load || {};
 
-tessellations.load.allModules = function () {
-	tessellations.load.arrays().buildType().idTypes().geom().animation().player();
-};
+tessellations.arrays = function getArrays() {
 
-tessellations.load.arrays = function loadArrays() {
-	var t = tessellations;
+	var unit = {
 
-	var loaded = false;
+		isLoaded: false,
 
-	var loadModule = function loadModule() {
-		// using arrows here bc no use of (this)
+		contents: null,
 
-		t.arrays = {
+		build: function build() {
+			return {
 
-			lift: function lift(x) {
-				return Array.isArray(x) ? x : [x];
-			},
+				lift: function lift(x) {
+					return Array.isArray(x) ? x : [x];
+				},
 
-			forEachOf: function forEachOf(arr, func) {
-				for (var i = 0; i < arr.length; ++i) {
-					func(arr[i]);
-				}
-			},
-
-			arrayMax: function arrayMax(arr) {
-				return Array.isArray(arr) ? arr.reduce(function (a, b) {
-					return Math.max(a, b);
-				}) : arr;
-			},
-
-			csv: function csv(arr) {
-				return arr.join(', ');
-			},
-
-			addIfNew: function addIfNew(arr, element) {
-				if (arr.indexOf(element) === -1) {
-					arr.push(element);
-				}
-			},
-
-			addIfPredicate: function addIfPredicate(arr, element, predicate) {
-				if (predicate) {
-					arr.push(element);
-				}
-			},
-
-			indexOfKey: function indexOfKey(arr, key, value) {
-				for (var i = 0; i < arr.length; ++i) {
-					if (arr[i][key] === value) {
-						return i;
+				forEachOf: function forEachOf(arr, func) {
+					for (var i = 0; i < arr.length; ++i) {
+						func(arr[i]);
 					}
-				}
-				return -1;
-			},
+				},
 
-			findByKey: function findByKey(arr, key, value) {
-				for (var i = 0; i < arr.length; ++i) {
-					if (arr[i][key] === value) {
-						return arr[i];
+				forCount: function forCount(count, func) {
+					for (var i = 0; i < count; ++i) {
+						func(i);
 					}
+				},
+
+				arrayMax: function arrayMax(arr) {
+					return Array.isArray(arr) ? arr.reduce(function (a, b) {
+						return Math.max(a, b);
+					}) : arr;
+				},
+
+				csv: function csv(arr) {
+					return arr.join(', ');
+				},
+
+				addIfNew: function addIfNew(arr, element) {
+					if (arr.indexOf(element) === -1) {
+						arr.push(element);
+					}
+				},
+
+				addIfPredicate: function addIfPredicate(arr, element, predicate) {
+					if (predicate) {
+						arr.push(element);
+					}
+				},
+
+				indexOfKey: function indexOfKey(arr, key, value) {
+					for (var i = 0; i < arr.length; ++i) {
+						if (arr[i][key] === value) {
+							return i;
+						}
+					}
+					return -1;
+				},
+
+				findByKey: function findByKey(arr, key, value) {
+					for (var i = 0; i < arr.length; ++i) {
+						if (arr[i][key] === value) {
+							return arr[i];
+						}
+					}
+					return null;
 				}
-				return null;
+
+			};
+		}, // end build
+
+
+		loadOnce: function loadOnce() {
+			if (!unit.isLoaded) {
+				unit.contents = unit.build();
+				unit.isLoaded = true;
 			}
 
-		};
-	};
-
-	return function loadOnce() {
-		if (!loaded) {
-			loadModule();
-			loaded = true;
+			return unit.contents;
 		}
 
-		return t.load;
-	};
+	}; // end unit
+
+
+	return unit.loadOnce;
 }();
 
-tessellations.load.buildType = function loadBuildType() {
-	var t = tessellations;
+tessellations.buildType = function getBuildType() {
+	var unit = {
 
-	var loaded = false;
+		isLoaded: false,
 
-	var loadModule = function loadModule() {
-		t.load.arrays();
+		contents: null,
 
-		var _copyPrototypeFields = function _copyPrototypeFields(proto) {
-			var newObj = {};
+		build: function build() {
 
-			for (var key in proto) {
-				newObj[key] = proto[key];
-			}
+			var ar = tessellations.arrays();
 
-			return newObj;
-		};
+			var _copyPrototypeFields = function _copyPrototypeFields(proto) {
+				var newObj = {};
 
-		t.buildType = {
+				for (var key in proto) {
+					newObj[key] = proto[key];
+				}
 
-			basic: function basic(type) {
-				return function () {
-					var newObj = _copyPrototypeFields(type.proto);
-					type.addInstanceVars(newObj);
-					return newObj;
-				};
-			},
+				return newObj;
+			};
 
-			cachingIdType: function cachingIdType(type) {
-				return function () {
-					var cache = []; // private, shared by entire type ("static")
+			return {
 
-					var createObject = function createObject(idStr) {
+				basic: function basic(type) {
+					return function () {
 						var newObj = _copyPrototypeFields(type.proto);
-						type.addInstanceVars(newObj, idStr);
-						cache.push(newObj);
+						type.addInstanceVars(newObj);
 						return newObj;
 					};
+				},
 
-					var getOrCreate = function getOrCreate(idStr) {
-						var cachedObj = t.arrays.findByKey(cache, '_id', idStr);
-						return cachedObj || createObject(idStr);
-					};
+				cachingIdType: function cachingIdType(type) {
+					return function () {
 
-					return getOrCreate;
-				}();
+						var cache = []; // private, shared by entire type ("static")
+
+						var createObject = function createObject(idStr) {
+							var newObj = _copyPrototypeFields(type.proto);
+							type.addInstanceVars(newObj, idStr);
+							cache.push(newObj);
+							return newObj;
+						};
+
+						var getOrCreate = function getOrCreate(idStr) {
+							var cachedObj = ar.findByKey(cache, '_id', idStr);
+							return cachedObj || createObject(idStr);
+						};
+
+						return getOrCreate;
+					}();
+				}
+
+			}; // end build return obj
+		}, // end build
+
+
+		loadOnce: function loadOnce() {
+			if (!unit.isLoaded) {
+				unit.contents = unit.build();
+				unit.isLoaded = true;
 			}
-		};
-	}; // end loadModule
 
-
-	return function loadOnce() {
-		if (!loaded) {
-			loadModule();
-			loaded = true;
+			return unit.contents;
 		}
 
-		return t.load;
-	};
+	}; // end unit
+
+
+	return unit.loadOnce;
 }();

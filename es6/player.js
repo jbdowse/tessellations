@@ -1,149 +1,157 @@
 // Play/stop etc
 
 var tessellations = tessellations || {};
-tessellations.load = tessellations.load || {};
-	
-	
-tessellations.load.player = (function loadPlayer()
+
+
+tessellations.player = (function getPlayer()
 {
-	const t = tessellations;
 	
-	let loaded = false;
-	
-	const loadModule = () =>
-	{
-		t.load
-		.arrays()
-		.idTypes()
-		.animation();
+	const unit = {
 		
-		const ar = t.arrays;
+		isLoaded: false,
+		
+		contents: null,
+		
+		
+		build: () => {
+			
+			const
+				t = tessellations,
+				ar = t.arrays(),
+				id = t.idTypes().id(),
+				svg = t.idTypes().svg();
 		
 
-		const _st = { // "state"
+			const _st = { // "state"
 	
-			currentAnimation: null,
-			playQueue: [],
-			playing: false,
-			paused: false,
+				currentAnimation: null,
+				playQueue: [],
+				playing: false,
+				paused: false,
 			
-			// keeping function() in case use (this) instead of _st
-			end: function() {
-				_st.playing = false;		
-				_st.playQueue = [];
+				// keeping function() in case use (this) instead of _st
+				end: function() {
+					_st.playing = false;		
+					_st.playQueue = [];
 		
-				t.svg('to-start').off();
-				t.svg('play').on();
-			},
-		};
+					svg('to-start').off();
+					svg('play').on();
+				},
+			};
 	
 	
-		t.player = {
+			const player = {
 			
-			// using => wherever (this) not used
+				// using => wherever (this) not used
 			
-			currentAnimation: () => _st.currentAnimation,
+				currentAnimation: () => _st.currentAnimation,
 			
-			playQueue: () => _st.playQueue,
+				playQueue: () => _st.playQueue,
 			
-			setCurrentAnimation: animation => { _st.currentAnimation = animation; },
+				setCurrentAnimation: animation => { _st.currentAnimation = animation; },
 			
-			playing: () => _st.playing && ! _st.paused,
+				playing: () => _st.playing && ! _st.paused,
 			
-			paused: () => _st.playing && _st.paused,
+				paused: () => _st.playing && _st.paused,
 			
-			stopped: () => ! _st.playing,
+				stopped: () => ! _st.playing,
 
-			start: (/*demoIndex*/) => { _st.playing = true; },
+				start: (/*demoIndex*/) => { _st.playing = true; },
 			
-			end: _st.end, // used for stop() & at end of demos
+				end: _st.end, // used for stop() & at end of demos
 			
-			pause: () => { _st.paused = true; }, //...
+				pause: () => { _st.paused = true; }, //...
 			
-			resume: () => { _st.paused = false; }, //...
+				resume: () => { _st.paused = false; }, //...
 			
 			
-			play: function(/*demoIndex*/)
-			{
-				if (! this.playing() ) {
+				play: function(/*demoIndex*/)
+				{
+					if (! this.playing() ) {
 			
-					this.start(/*demoIndex*/);
-					this.setCurrentAnimation( t.demo(1 /*demoIndex)*/).animation() );
+						this.start(/*demoIndex*/);
+						this.setCurrentAnimation( t.demo(0 /*demoIndex)*/).animation() );
 				
-					t.svg('to-start').on();
-					t.svg('play').off();
+						svg('to-start').on();
+						svg('play').off();
 	
-					// call setTimeout() for each of the scenes,
-					// & store the timeouts in playQueue:
+						// call setTimeout() for each of the scenes,
+						// & store the timeouts in playQueue:
 					
-					ar.forEachOf(this.currentAnimation().actions(), action =>
-					{
-						this.playQueue().push( action() );
-					});
-				}
-			},
-	
-	
-			stop: function()
-			{
-				// for some reason "this" doesn't work here though it does at play()
-					
-				ar.forEachOf(_st.playQueue, timeout =>
-				{
-					window.clearTimeout(timeout);
-				});
-		
-				ar.forEachOf(_st.currentAnimation.animatedElements(), shape =>
-				{
-					t.svg(shape).reset();
-				});
-		
-				t.id('caption').html('');
-				t.id('demo1-title').html('');
-		
-				_st.end();
-			},
-			
-			
-			addListeners: function()
-			{
-				t.id('play').listen('click', () => {
-					t.player.play(/*1*/);
-				});
-				
-				t.id('to-start').listen('click', t.player.stop);
-		
-				window.addEventListener('keydown', k =>
-				{
-					if (k.key === " ") {
-						if (t.player.playing()) {
-							t.player.stop();
-						}
-						else {
-							t.player.play();
-						}
+						ar.forEachOf(this.currentAnimation().actions(), action =>
+						{
+							this.playQueue().push( action() );
+						});
 					}
-				});
-
-				// eventually need to add listeners for pause/resume, demo 2, home screen, ...
-
-			},
+				},
+	
+	
+				stop: function()
+				{
+					// for some reason "this" doesn't work here though it does at play()
+					
+					ar.forEachOf(_st.playQueue, timeout =>
+					{
+						window.clearTimeout(timeout);
+					});
+		
+					ar.forEachOf(_st.currentAnimation.animatedElements(), shape =>
+					{
+						svg(shape).reset();
+					});
+		
+					id('caption').html('');
+					id('demo0-title').html('');
+		
+					_st.end();
+				},
 			
-		}; // end t.player
+			
+				addListeners: function()
+				{
+					id('play').listen('click', () => {
+						this.play(/*0*/);
+					});
+				
+					id('to-start').listen('click', this.stop);
+		
+					window.addEventListener('keydown', k =>
+					{
+						if (k.key === " ") {
+							if (this.playing()) {
+								this.stop();
+							}
+							else {
+								this.play();
+							}
+						}
+					});
 
-	}; // end loadModule
+					// eventually need to add listeners for pause/resume, demo 1, home screen, ...
+
+				},
+			
+			}; // end player
+			
+			
+			return player;
+
+		}, // end build
+		
+		
+		loadOnce: () =>
+		{
+			if (! unit.isLoaded) {
+				unit.contents = unit.build();
+				unit.isLoaded = true;
+			}
+			
+			return unit.contents;
+		},
+		
+	}; // end unit
 	
 	
-	return function loadOnce()
-	{
-		if (! loaded) {
-			loadModule();
-			loaded = true;
-		}
-	
-		return t.load;
-	};
-	
+	return unit.loadOnce;
 	
 })();
-

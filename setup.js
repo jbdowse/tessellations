@@ -9,8 +9,6 @@
 window.addEventListener('load', function fullSetup() {
 	var t = tessellations;
 
-	t.load.allModules();
-	t.initializeDemos();
-	t.build.demo1.all();
-	t.player.addListeners();
+	t.demo(0).initSvg();
+	t.player().addListeners();
 });
