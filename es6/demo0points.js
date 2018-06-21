@@ -16,9 +16,18 @@ tessellations.initDemos = (() =>
 		
 		access: null,
 		
-		accessInit: () => {
-			const demoData = [{}, {}];
-			return index => demoData[index];
+		accessInit: () =>
+		{
+			const demoData = [];
+			
+			return index =>
+			{
+				if (demoData[index] === undefined) {
+					demoData[index] = {};
+				}
+				
+				return demoData[index];
+			};
 		},
 		
 		initOnceAndAccess: index =>

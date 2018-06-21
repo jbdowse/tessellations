@@ -17,8 +17,13 @@ tessellations.initDemos = function () {
 		access: null,
 
 		accessInit: function accessInit() {
-			var demoData = [{}, {}];
+			var demoData = [];
+
 			return function (index) {
+				if (demoData[index] === undefined) {
+					demoData[index] = {};
+				}
+
 				return demoData[index];
 			};
 		},
