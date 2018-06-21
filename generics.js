@@ -1,173 +1,138 @@
+'use strict';
+
 // Type builders + array functions
 
 var tessellations = tessellations || {};
 tessellations.load = tessellations.load || {};
 
-tessellations.load.allModules = () =>
-{
-	tessellations.load
-	.arrays()
-	.buildType()
-	.idTypes()
-	.geom()
-	.animation()
-	.player();
+tessellations.load.allModules = function () {
+	tessellations.load.arrays().buildType().idTypes().geom().animation().player();
 };
 
+tessellations.load.arrays = function loadArrays() {
+	var t = tessellations;
 
-tessellations.load.arrays = (function loadArrays()
-{
-	const t = tessellations;
-	
-	let loaded = false;
-	
-	
-	const loadModule = () =>
-	{
+	var loaded = false;
+
+	var loadModule = function loadModule() {
 		// using arrows here bc no use of (this)
-		
+
 		t.arrays = {
 
+			lift: function lift(x) {
+				return Array.isArray(x) ? x : [x];
+			},
 
-			lift: x => Array.isArray(x)? x : [x],
+			arrayMax: function arrayMax(arr) {
+				return Array.isArray(arr) ? arr.reduce(function (a, b) {
+					return Math.max(a, b);
+				}) : arr;
+			},
 
+			csv: function csv(arr) {
+				return arr.join(', ');
+			},
 
-			arrayMax: arr => Array.isArray(arr) ?
-				arr.reduce((a, b) => Math.max(a, b)) :
-				arr,
-
-
-			csv: arr => arr.join(', '),
-
-
-			addIfNew: (arr, element) =>
-			{
+			addIfNew: function addIfNew(arr, element) {
 				if (arr.indexOf(element) === -1) {
 					arr.push(element);
 				}
 			},
 
-
-			addIfPredicate: (arr, element, predicate) =>
-			{
+			addIfPredicate: function addIfPredicate(arr, element, predicate) {
 				if (predicate) {
 					arr.push(element);
 				}
 			},
 
-
-			indexOfKey: (arr, key, value) =>
-			{
-				for (let i = 0; i < arr.length; ++i) {
+			indexOfKey: function indexOfKey(arr, key, value) {
+				for (var i = 0; i < arr.length; ++i) {
 					if (arr[i][key] === value) {
 						return i;
 					}
 				}
 				return -1;
 			},
-	
-	
-			findByKey: (arr, key, value) =>
-			{
-				for (let i = 0; i < arr.length; ++i) {
+
+			findByKey: function findByKey(arr, key, value) {
+				for (var i = 0; i < arr.length; ++i) {
 					if (arr[i][key] === value) {
 						return arr[i];
 					}
 				}
 				return null;
-			},
-			
+			}
+
 		};
-		
-		
 	};
-	
-	
-	return function loadOnce()
-	{
-		if (! loaded) {
+
+	return function loadOnce() {
+		if (!loaded) {
 			loadModule();
 			loaded = true;
 		}
-	
+
 		return t.load;
 	};
-	
-})();
+}();
 
+tessellations.load.buildType = function loadBuildType() {
+	var t = tessellations;
 
+	var loaded = false;
 
-tessellations.load.buildType = (function loadBuildType()
-{
-	const t = tessellations;
-	
-	let loaded = false;
-	
-	
-	const loadModule = () =>
-	{
+	var loadModule = function loadModule() {
 		t.load.arrays();
-		
 
-		const _copyPrototypeFields = proto =>
-		{
-			const newObj = {};
-			
-			for (const key in proto) {
+		var _copyPrototypeFields = function _copyPrototypeFields(proto) {
+			var newObj = {};
+
+			for (var key in proto) {
 				newObj[key] = proto[key];
 			}
-			
-			return newObj;		
-		};
 
+			return newObj;
+		};
 
 		t.buildType = {
-	
-			basic: type => (
-				() => {
-					const newObj = _copyPrototypeFields(type.proto);
+
+			basic: function basic(type) {
+				return function () {
+					var newObj = _copyPrototypeFields(type.proto);
 					type.addInstanceVars(newObj);
 					return newObj;
-				}
-			),
+				};
+			},
 
+			cachingIdType: function cachingIdType(type) {
+				return function () {
+					var cache = []; // private, shared by entire type ("static")
 
-			cachingIdType: type => (
-				(() =>
-				{
-					const cache = []; // private, shared by entire type ("static")
-
-					const createObject = idStr =>
-					{
-						const newObj = _copyPrototypeFields(type.proto);
+					var createObject = function createObject(idStr) {
+						var newObj = _copyPrototypeFields(type.proto);
 						type.addInstanceVars(newObj, idStr);
 						cache.push(newObj);
-				    	return newObj;
+						return newObj;
 					};
 
-					const getOrCreate = idStr =>
-					{
-						const cachedObj = t.arrays.findByKey(cache, '_id', idStr);
+					var getOrCreate = function getOrCreate(idStr) {
+						var cachedObj = t.arrays.findByKey(cache, '_id', idStr);
 						return cachedObj || createObject(idStr);
 					};
-					
+
 					return getOrCreate;
-				
-				})()
-			),
+				}();
+			}
 		};
-		
 	}; // end loadModule
-	
-	
-	return function loadOnce()
-	{
-		if (! loaded) {
+
+
+	return function loadOnce() {
+		if (!loaded) {
 			loadModule();
 			loaded = true;
 		}
-	
+
 		return t.load;
 	};
-	
-})();
+}();

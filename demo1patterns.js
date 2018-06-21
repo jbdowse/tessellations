@@ -1,140 +1,96 @@
+'use strict';
+
 // Namespace to encapsulate tessellation pattern definitions
 
 var tessellations = tessellations || {};
 tessellations.build = tessellations.build || {};
 tessellations.build.demo1 = tessellations.build.demo1 || {};
 
+tessellations.build.demo1.patterns = function buildDemo1Patterns() {
+	var t = tessellations;
 
-tessellations.build.demo1.patterns = (function buildDemo1Patterns()
-{
-	const t = tessellations;
-	
-	let built = false;
-	
-	
-	const buildComponent = () =>
-	{
+	var built = false;
+
+	var buildComponent = function buildComponent() {
 		t.load.idTypes();
-		
+
 		t.initializeDemos();
-		
-		t.build.demo1
-		.points()
-		.shapes();
-		
 
-		const generators = (() => {
+		t.build.demo1.points().shapes();
 
-			const generatorList = [
-				['loAc'],
-				['ssw'],
-				['nnw', 'ene', 'nnw', 'wsw', 'sse', 'wsw'],
+		var generators = function () {
 
-				['loAc', 'loGr', 'loAc'],
-				['ese', 'nne', 'ese', 'ssw', 'wnw', 'ssw'],
-				['wsw', 'ese', 'wsw', 'wnw', 'ene', 'wnw'],
+			var generatorList = [['loAc'], ['ssw'], ['nnw', 'ene', 'nnw', 'wsw', 'sse', 'wsw'], ['loAc', 'loGr', 'loAc'], ['ese', 'nne', 'ese', 'ssw', 'wnw', 'ssw'], ['wsw', 'ese', 'wsw', 'wnw', 'ene', 'wnw'], ['loAc', 'loGr'], ['ssw', 'sse'], ['sse', 'wnw'], ['loAc', 'hiGr'], ['ssw', 'nne', 'ssw'], ['sse', 'sse', 'sse', 'nne', 'nne', 'nne']];
 
-				['loAc', 'loGr'],
-				['ssw', 'sse'],
-				['sse', 'wnw'],
+			return function (index) {
+				return generatorList[index];
+			};
+		}();
 
-				['loAc', 'hiGr'],
-				['ssw', 'nne', 'ssw'],
-				['sse', 'sse', 'sse', 'nne', 'nne', 'nne'],
-			];
+		var buildPattern = function buildPattern(patId, generatorsIndex) {
+			var pt = t.demo(1).points,
+			    sqsPerSide = pt.sqsPerSide(),
+			    generator = generators(generatorsIndex),
+			    generatorLength = generator.length,
+			    shiftInterval = pt.sqLength(),
+			    startShift = -shiftInterval;
 
-			return index => generatorList[index];
+			for (var row = 0; row < sqsPerSide; ++row) {
+				var shiftY = startShift + row * shiftInterval,
+				    indexOffset = row * sqsPerSide;
 
-		})();
+				for (var column = 0; column < sqsPerSide; ++column) {
+					var squareIndex = indexOffset + column,
+					    indexInGen = squareIndex % generatorLength,
+					    squareDefId = generator[indexInGen],
+					    shiftX = startShift + column * shiftInterval;
 
-
-		const buildPattern = (patId, generatorsIndex) =>
-		{
-			const
-				pt = t.demo(1).points,
-				sqsPerSide = pt.sqsPerSide(),
-				generator = generators(generatorsIndex),
-				generatorLength = generator.length,
-				shiftInterval = pt.sqLength(),
-				startShift = -shiftInterval;
-
-			for (let row = 0; row < sqsPerSide; ++row)
-			{
-				const
-					shiftY = startShift + row * shiftInterval,
-					indexOffset = row * sqsPerSide;
-	
-				for (let column = 0; column < sqsPerSide; ++column)
-				{
-					const
-						squareIndex =  indexOffset + column,
-						indexInGen = squareIndex % generatorLength,
-						squareDefId = generator[indexInGen],
-						shiftX = startShift + column * shiftInterval;
-		
-					t.svg(patId).defineAnon('use', [
-						'href', '#' + squareDefId,
-						'x', shiftX,
-						'y', shiftY,
-					]);
+					t.svg(patId).defineAnon('use', ['href', '#' + squareDefId, 'x', shiftX, 'y', shiftY]);
 				}
 			}
 		};
 
+		var buildPatternSet = function buildPatternSet(setIndex) {
+			var patsPerSet = 3,
+			    baseGeneratorIndex = setIndex * patsPerSet,
+			    shiftInterval = t.demo(1).points.patShift(),
+			    startShift = -shiftInterval;
 
-		const buildPatternSet = setIndex =>
-		{
-			const
-				patsPerSet = 3,
-				baseGeneratorIndex = setIndex * patsPerSet,
-				shiftInterval = t.demo(1).points.patShift(),
-				startShift = -shiftInterval;
+			for (var patIndex = 0; patIndex < patsPerSet; ++patIndex) {
+				var patId = 'set' + setIndex + 'pat' + patIndex,
+				    generatorIndex = baseGeneratorIndex + patIndex,
+				    shift = startShift + patIndex * shiftInterval;
 
-			for (let patIndex = 0; patIndex < patsPerSet; ++patIndex)
-			{
-				const
-					patId = 'set' + setIndex + 'pat' + patIndex,
-					generatorIndex = baseGeneratorIndex + patIndex,
-					shift = startShift + patIndex * shiftInterval;
-	
 				t.svg('pats' + setIndex).add('g', patId);
-	
+
 				buildPattern(patId, generatorIndex);
-	
-				t.svg(patId).attr([
-					'transform', 'translate(' + shift + ', 0)'
-				]);
+
+				t.svg(patId).attr(['transform', 'translate(' + shift + ', 0)']);
 			}
 		};
-		
-		
+
 		// trying out labeled code blocks instead of IIFEs here:
-		
+
 		buildInitPat: {
-			const initPatGeneratorIndex = 9;
+			var initPatGeneratorIndex = 9;
 			buildPattern('initPat', initPatGeneratorIndex);
 		}
 
-
 		buildPatternSets: {
-			const setCount = 4;
-			for (let setIndex = 0; setIndex < setCount; ++setIndex) {
+			var setCount = 4;
+			for (var setIndex = 0; setIndex < setCount; ++setIndex) {
 				buildPatternSet(setIndex);
 			}
 		}
-	
 	}; // end buildComponent
 
-	
-	
-	return function buildOnce()
-	{
-		if (! built) {
+
+	return function buildOnce() {
+		if (!built) {
 			buildComponent();
 			built = true;
 		}
-	
+
 		return t.build.demo1;
 	};
-	
-})(); // end t.build.demo1.patterns
+}(); // end t.build.demo1.patterns

@@ -1,209 +1,230 @@
+"use strict";
+
 // Definitions for points used in shape definitions & transformations
 
 var tessellations = tessellations || {};
 tessellations.build = tessellations.build || {};
 tessellations.build.demo1 = tessellations.build.demo1 || {};
 
+tessellations.initializeDemos = function () {
+	var t = tessellations;
 
-tessellations.initializeDemos = (() =>
-{
-	const t = tessellations;
+	var initialized = false;
 
-	let initialized = false;
-	
-	const init = () =>
-	{
-		const _demos = [{}, {}];
-	
-		t.demo = n => _demos[n - 1];
+	var init = function init() {
+		var _demos = [{}, {}];
+
+		t.demo = function (n) {
+			return _demos[n - 1];
+		};
 	};
-	
-	return function initOnce()
-	{
-		if (! initialized) {
+
+	return function initOnce() {
+		if (!initialized) {
 			init();
 			initialized = true;
 		}
 	};
-	
-})();
+}();
 
-
-tessellations.build.demo1.all = function()
-{
-	tessellations.build.demo1
-	.points()
-	.shapes()
-	.patterns()
-	.styles()
-	.animation();
+tessellations.build.demo1.all = function () {
+	tessellations.build.demo1.points().shapes().patterns().styles().animation();
 };
 
-	
-tessellations.build.demo1.points = (function buildDemo1Points()
-{
-	const t = tessellations;
-	
-	let built = false;
-	
-	
-	const buildComponent = function()
-	{
-		t.initializeDemos();
-		
+tessellations.build.demo1.points = function buildDemo1Points() {
+	var t = tessellations;
 
-		const _SquarePoints = rad => {
-			
-			const _pts = {
+	var built = false;
+
+	var buildComponent = function buildComponent() {
+		t.initializeDemos();
+
+		var _SquarePoints = function _SquarePoints(rad) {
+
+			var _pts = {
 				start: -rad,
-				end: rad,
+				end: rad
 			};
 
 			return {
 				start: _pts.start,
 				end: _pts.end,
-				length: 2*rad,
+				length: 2 * rad,
 				center: [0, 0],
 				TL: [_pts.start, _pts.start],
 				TR: [_pts.end, _pts.start],
 				BL: [_pts.start, _pts.end],
-				BR: [_pts.end, _pts.end],		
+				BR: [_pts.end, _pts.end]
 			};
 		};
 
-
 		// points/counts/lengths for initial-construction shapes:
-		const _shp = (() =>
-		{
-			const s = _SquarePoints(64);
+		var _shp = function () {
+			var s = _SquarePoints(64);
 
 			s.gridSubdivs = 4;
-			s.gridCell = s.length/s.gridSubdivs;
+			s.gridCell = s.length / s.gridSubdivs;
 			s.btmBump = [0, s.end - s.gridCell]; // bottom bump-in
 			s.leftBump = [s.start - s.gridCell, 0]; // left bumpout
-	
+
 			return s;
-
-		})();
-
+		}();
 
 		// points/counts for pattern squares:
-		const _sq = (() =>
-		{
-			const
-				s = _SquarePoints(32),
-				_bump = s.length/8;
-	
+		var _sq = function () {
+			var s = _SquarePoints(32),
+			    _bump = s.length / 8;
+
 			s.TLBump = [s.start + _bump, -_bump];
 			s.TRBump = [_bump, s.start + _bump];
 			s.BRBump = [s.end - _bump, _bump];
-			s.scaleUp = _shp.length/s.length * Math.sqrt(2);
-	
+			s.scaleUp = _shp.length / s.length * Math.sqrt(2);
+
 			return s;
-
-		})();
-
+		}();
 
 		// other values for patterns:
-		const _pat = (() =>
-		{
-			const p = {
+		var _pat = function () {
+			var p = {
 				sqsPerSide: 3,
-				gutter: 16, // px
+				gutter: 16 // px
 			};
-			
-			p.shift = _sq.length * p.sqsPerSide + p.gutter;
-	
-			return p;
-	
-		})();
 
+			p.shift = _sq.length * p.sqsPerSide + p.gutter;
+
+			return p;
+		}();
 
 		// positions offset by 0.5px for lines:
-		const _line = (() => {
-	
-			const
-				_offset = 0.5,
-				_gridStart = _shp.start + _offset,
-				_gridEnd = _shp.end + _offset;
-	
+		var _line = function () {
+
+			var _offset = 0.5,
+			    _gridStart = _shp.start + _offset,
+			    _gridEnd = _shp.end + _offset;
+
 			return {
 				cx: _offset,
 				cy: _offset,
 				gridTL: [_gridStart, _gridStart],
 				gridTR: [_gridEnd, _gridStart],
-				gridBL: [_gridStart, _gridEnd],
+				gridBL: [_gridStart, _gridEnd]
 			};
-	
-		})();
-	
-	
-	
+		}();
+
 		t.demo(1).points = {
 
 			// for shapes/squares/patterns:
 
-			center: () => _shp.center,
+			center: function center() {
+				return _shp.center;
+			},
 
-			shpTL: () => _shp.TL,
-			shpBL: () => _shp.BL,
-			shpBR: () => _shp.BR,
-			shpBtmBump: () => _shp.btmBump,
-			shpLeftBump: () => _shp.leftBump,
-			gridSubdivs: () => _shp.gridSubdivs,
-			gridCell: () => _shp.gridCell,
+			shpTL: function shpTL() {
+				return _shp.TL;
+			},
+			shpBL: function shpBL() {
+				return _shp.BL;
+			},
+			shpBR: function shpBR() {
+				return _shp.BR;
+			},
+			shpBtmBump: function shpBtmBump() {
+				return _shp.btmBump;
+			},
+			shpLeftBump: function shpLeftBump() {
+				return _shp.leftBump;
+			},
+			gridSubdivs: function gridSubdivs() {
+				return _shp.gridSubdivs;
+			},
+			gridCell: function gridCell() {
+				return _shp.gridCell;
+			},
 
-			sqTL: () => _sq.TL,
-			sqTR: () => _sq.TR,
-			sqBR: () => _sq.BR,
-			sqTLBump: () => _sq.TLBump,
-			sqTRBump: () => _sq.TRBump,
-			sqBRBump: () => _sq.BRBump,
-			sqLength: () => _sq.length,
+			sqTL: function sqTL() {
+				return _sq.TL;
+			},
+			sqTR: function sqTR() {
+				return _sq.TR;
+			},
+			sqBR: function sqBR() {
+				return _sq.BR;
+			},
+			sqTLBump: function sqTLBump() {
+				return _sq.TLBump;
+			},
+			sqTRBump: function sqTRBump() {
+				return _sq.TRBump;
+			},
+			sqBRBump: function sqBRBump() {
+				return _sq.BRBump;
+			},
+			sqLength: function sqLength() {
+				return _sq.length;
+			},
 
-			lineCx: () => _line.cx,
-			lineCy: () => _line.cy,
-			gridTL: () => _line.gridTL,
-			gridTR: () => _line.gridTR,
-			gridBL: () => _line.gridBL,
+			lineCx: function lineCx() {
+				return _line.cx;
+			},
+			lineCy: function lineCy() {
+				return _line.cy;
+			},
+			gridTL: function gridTL() {
+				return _line.gridTL;
+			},
+			gridTR: function gridTR() {
+				return _line.gridTR;
+			},
+			gridBL: function gridBL() {
+				return _line.gridBL;
+			},
 
-			sqsPerSide: () => _pat.sqsPerSide,
-			patShift: () => _pat.shift,
+			sqsPerSide: function sqsPerSide() {
+				return _pat.sqsPerSide;
+			},
+			patShift: function patShift() {
+				return _pat.shift;
+			},
 
 			// accessors/functions for transforms:
 
-			rotX: () => _shp.start,
-			rotY: () => _shp.end,
-			sqScaleUp: () => _sq.scaleUp,
-			zoomSmall: () => 1/64,
-			zoomLarge: () => 2,
+			rotX: function rotX() {
+				return _shp.start;
+			},
+			rotY: function rotY() {
+				return _shp.end;
+			},
+			sqScaleUp: function sqScaleUp() {
+				return _sq.scaleUp;
+			},
+			zoomSmall: function zoomSmall() {
+				return 1 / 64;
+			},
+			zoomLarge: function zoomLarge() {
+				return 2;
+			},
 
-			sq4: n =>
-			{
-				const
-					zero_dist = -3 * _sq.length,
-					unit_dist = 2 * _sq.length;
-					
+			sq4: function sq4(n) {
+				var zero_dist = -3 * _sq.length,
+				    unit_dist = 2 * _sq.length;
+
 				return zero_dist + n * unit_dist;
 			},
 
-			sq3: n => {
-				const zero_dist = -_pat.shift;
+			sq3: function sq3(n) {
+				var zero_dist = -_pat.shift;
 				return zero_dist + n * _pat.shift;
-			},
+			}
 		};
-	
 	}; // end buildComponent
 
-	
-	return function buildOnce()
-	{
-		if (! built) {
+
+	return function buildOnce() {
+		if (!built) {
 			buildComponent();
 			built = true;
 		}
-	
+
 		return t.build.demo1;
 	};
-	
-})(); // end t.build.demo1.points
+}(); // end t.build.demo1.points
