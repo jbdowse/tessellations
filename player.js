@@ -11,7 +11,9 @@ tessellations.load.player = function loadPlayer() {
 	var loaded = false;
 
 	var loadModule = function loadModule() {
-		t.load.idTypes().animation();
+		t.load.arrays().idTypes().animation();
+
+		var ar = t.arrays;
 
 		var _st = { // "state"
 
@@ -74,6 +76,8 @@ tessellations.load.player = function loadPlayer() {
 
 
 			play: function play() /*demoIndex*/{
+				var _this = this;
+
 				if (!this.playing()) {
 
 					this.start();
@@ -85,61 +89,22 @@ tessellations.load.player = function loadPlayer() {
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
 
-					for (var _iterator = this.currentAnimation().actions(), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-						var _ref;
-
-						if (_isArray) {
-							if (_i >= _iterator.length) break;
-							_ref = _iterator[_i++];
-						} else {
-							_i = _iterator.next();
-							if (_i.done) break;
-							_ref = _i.value;
-						}
-
-						var action = _ref;
-
-						this.playQueue().push(action());
-					}
+					ar.forEachOf(this.currentAnimation().actions(), function (action) {
+						_this.playQueue().push(action());
+					});
 				}
 			},
 
 			stop: function stop() {
 				// for some reason "this" doesn't work here though it does at play()
 
-				for (var _iterator2 = _st.playQueue, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-					var _ref2;
-
-					if (_isArray2) {
-						if (_i2 >= _iterator2.length) break;
-						_ref2 = _iterator2[_i2++];
-					} else {
-						_i2 = _iterator2.next();
-						if (_i2.done) break;
-						_ref2 = _i2.value;
-					}
-
-					var timeout = _ref2;
-
+				ar.forEachOf(_st.playQueue, function (timeout) {
 					window.clearTimeout(timeout);
-				}
+				});
 
-				for (var _iterator3 = _st.currentAnimation.animatedElements(), _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-					var _ref3;
-
-					if (_isArray3) {
-						if (_i3 >= _iterator3.length) break;
-						_ref3 = _iterator3[_i3++];
-					} else {
-						_i3 = _iterator3.next();
-						if (_i3.done) break;
-						_ref3 = _i3.value;
-					}
-
-					var shape = _ref3;
-
+				ar.forEachOf(_st.currentAnimation.animatedElements(), function (shape) {
 					t.svg(shape).reset();
-				}
+				});
 
 				t.id('caption').html('');
 				t.id('demo1-title').html('');

@@ -30,6 +30,15 @@ tessellations.load.arrays = (function loadArrays()
 
 
 			lift: x => Array.isArray(x)? x : [x],
+			
+			
+			forEachOf: (arr, func) =>
+			{
+				for (let i = 0; i < arr.length; ++i)
+				{
+					func(arr[i]);
+				}
+			},
 
 
 			arrayMax: arr => Array.isArray(arr) ?

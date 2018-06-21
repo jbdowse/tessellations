@@ -144,6 +144,7 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 	{
 		
 		t.load
+		.arrays()
 		.idTypes()
 		.geom();
 		
@@ -166,6 +167,7 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 
 		
 		const
+			ar = t.arrays,
 			svg = t.svg,
 			pt = t.demo(1).points,
 			c = t.demo(1).colors,
@@ -199,11 +201,12 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				'zoom'
 			];
 	
-			for (const id of allAnimatedShapes) {
+			ar.forEachOf(allAnimatedShapes, id =>
+			{
 				svg(id)
 					.initStyle('display', 'none')
 					.initStyle('opacity', 0);
-			}
+			});
 		
 		}
 	
@@ -221,9 +224,10 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				'zoom'
 			];
 
-			for (const id of baseColorShapes) {
+			ar.forEachOf(baseColorShapes, id =>
+			{
 				svg(id).initStyle('fill', c.base);
-			}
+			});
 		
 		}
 	
@@ -238,11 +242,11 @@ tessellations.build.demo1.styles = (function buildDemo1Styles()
 				'BRTile'
 			];
 
-			for (const id of BLRotators)
+			ar.forEachOf(BLRotators, id =>
 			{
 				const origin = t.geom.pxPt( pt.shpBL() );
 				svg(id).initStyle('transformOrigin', origin);
-			}
+			});
 		
 		}
 	

@@ -149,22 +149,11 @@ tessellations.load.idTypes = function loadIdTypes() {
 					},
 
 					reset: function reset() {
-						for (var _iterator = this.initialStyles(), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-							var _ref;
+						var _this = this;
 
-							if (_isArray) {
-								if (_i >= _iterator.length) break;
-								_ref = _iterator[_i++];
-							} else {
-								_i = _iterator.next();
-								if (_i.done) break;
-								_ref = _i.value;
-							}
-
-							var initialStyle = _ref;
-
-							this.style(initialStyle.property, initialStyle.value);
-						}
+						ar.forEachOf(this.initialStyles(), function (initialStyle) {
+							_this.style(initialStyle.property, initialStyle.value);
+						});
 
 						this.style('display', 'none').style('transitionProperty', '').style('transitionDuration', '');
 

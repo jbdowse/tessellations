@@ -45,23 +45,10 @@ tessellations.load.animation = function loadAnimation() {
 				},
 
 				addAnyInitialStylesIfChanging: function addAnyInitialStylesIfChanging(idStr, props) {
-					for (var _iterator = props, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-						var _ref;
-
-						if (_isArray) {
-							if (_i >= _iterator.length) break;
-							_ref = _iterator[_i++];
-						} else {
-							_i = _iterator.next();
-							if (_i.done) break;
-							_ref = _i.value;
-						}
-
-						var prop = _ref;
-
+					ar.forEachOf(props, function (prop) {
 						var shape = svg(idStr);
 						shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
-					}
+					});
 				},
 
 				captionTiming: {
@@ -117,32 +104,21 @@ tessellations.load.animation = function loadAnimation() {
 			},
 
 			to: function to(idStrs, properties, newValues, transTimes) {
+				var _this = this;
+
 				var ids = ar.lift(idStrs);
 
-				for (var _iterator2 = ids, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-					var _ref2;
+				ar.forEachOf(ids, function (id) {
+					_this.addElementIfNew(id);
 
-					if (_isArray2) {
-						if (_i2 >= _iterator2.length) break;
-						_ref2 = _iterator2[_i2++];
-					} else {
-						_i2 = _iterator2.next();
-						if (_i2.done) break;
-						_ref2 = _i2.value;
-					}
-
-					var id = _ref2;
-
-					this.addElementIfNew(id);
-
-					this.transition({
-						start: this.elapsedTime(),
+					_this.transition({
+						start: _this.elapsedTime(),
 						id: id,
 						props: properties,
 						vals: newValues,
 						transTimes: transTimes
 					});
-				}
+				});
 
 				var maxTime = ar.arrayMax(transTimes);
 				this.wait(maxTime);
@@ -151,67 +127,30 @@ tessellations.load.animation = function loadAnimation() {
 			},
 
 			show: function show(idStrs, optTransTime) {
+				var _this2 = this;
+
 				var transTime = optTransTime || 0,
 				    idSet = ar.lift(idStrs);
 
-				for (var _iterator3 = idSet, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-					var _ref3;
-
-					if (_isArray3) {
-						if (_i3 >= _iterator3.length) break;
-						_ref3 = _iterator3[_i3++];
-					} else {
-						_i3 = _iterator3.next();
-						if (_i3.done) break;
-						_ref3 = _i3.value;
-					}
-
-					var id = _ref3;
-
-					this.addElementIfNew(id);
-				}
+				ar.forEachOf(idSet, function (id) {
+					_this2.addElementIfNew(id);
+				});
 
 				this.enqueue(function () {
-					for (var _iterator4 = idSet, _isArray4 = Array.isArray(_iterator4), _i4 = 0, _iterator4 = _isArray4 ? _iterator4 : _iterator4[Symbol.iterator]();;) {
-						var _ref4;
-
-						if (_isArray4) {
-							if (_i4 >= _iterator4.length) break;
-							_ref4 = _iterator4[_i4++];
-						} else {
-							_i4 = _iterator4.next();
-							if (_i4.done) break;
-							_ref4 = _i4.value;
-						}
-
-						var id = _ref4;
-
+					ar.forEachOf(idSet, function (id) {
 						svg(id).on();
-					}
+					});
 				}, this.elapsedTime());
 
-				for (var _iterator5 = idSet, _isArray5 = Array.isArray(_iterator5), _i5 = 0, _iterator5 = _isArray5 ? _iterator5 : _iterator5[Symbol.iterator]();;) {
-					var _ref5;
-
-					if (_isArray5) {
-						if (_i5 >= _iterator5.length) break;
-						_ref5 = _iterator5[_i5++];
-					} else {
-						_i5 = _iterator5.next();
-						if (_i5.done) break;
-						_ref5 = _i5.value;
-					}
-
-					var _id = _ref5;
-
-					this.transition({
-						start: this.elapsedTime(),
-						id: _id,
+				ar.forEachOf(idSet, function (id) {
+					_this2.transition({
+						start: _this2.elapsedTime(),
+						id: id,
 						props: 'opacity',
 						vals: 1,
 						transTimes: transTime
 					});
-				}
+				});
 
 				this.wait(transTime);
 
@@ -219,54 +158,29 @@ tessellations.load.animation = function loadAnimation() {
 			},
 
 			hide: function hide(idStrs, optTransTime) {
+				var _this3 = this;
 
 				var transTime = optTransTime || 0,
 				    idSet = ar.lift(idStrs);
 
-				for (var _iterator6 = idSet, _isArray6 = Array.isArray(_iterator6), _i6 = 0, _iterator6 = _isArray6 ? _iterator6 : _iterator6[Symbol.iterator]();;) {
-					var _ref6;
+				ar.forEachOf(idSet, function (id) {
+					_this3.addElementIfNew(id);
 
-					if (_isArray6) {
-						if (_i6 >= _iterator6.length) break;
-						_ref6 = _iterator6[_i6++];
-					} else {
-						_i6 = _iterator6.next();
-						if (_i6.done) break;
-						_ref6 = _i6.value;
-					}
-
-					var id = _ref6;
-
-					this.addElementIfNew(id);
-
-					this.transition({
-						start: this.elapsedTime(),
+					_this3.transition({
+						start: _this3.elapsedTime(),
 						id: id,
 						props: 'opacity',
 						vals: 0,
 						transTime: transTime
 					});
-				}
+				});
 
 				this.wait(transTime);
 
 				this.enqueue(function () {
-					for (var _iterator7 = idSet, _isArray7 = Array.isArray(_iterator7), _i7 = 0, _iterator7 = _isArray7 ? _iterator7 : _iterator7[Symbol.iterator]();;) {
-						var _ref7;
-
-						if (_isArray7) {
-							if (_i7 >= _iterator7.length) break;
-							_ref7 = _iterator7[_i7++];
-						} else {
-							_i7 = _iterator7.next();
-							if (_i7.done) break;
-							_ref7 = _i7.value;
-						}
-
-						var id = _ref7;
-
+					ar.forEachOf(idSet, function (id) {
 						svg(id).off();
-					}
+					});
 				}, this.elapsedTime());
 
 				return this;
@@ -314,27 +228,15 @@ tessellations.load.animation = function loadAnimation() {
 			},
 
 			end: function end() {
-				var _this = this;
+				var _this4 = this;
 
 				// this in inner arrow fn should refer to this object:
 
 				this.enqueue(function () {
-					for (var _iterator8 = _this.animatedElements(), _isArray8 = Array.isArray(_iterator8), _i8 = 0, _iterator8 = _isArray8 ? _iterator8 : _iterator8[Symbol.iterator]();;) {
-						var _ref8;
-
-						if (_isArray8) {
-							if (_i8 >= _iterator8.length) break;
-							_ref8 = _iterator8[_i8++];
-						} else {
-							_i8 = _iterator8.next();
-							if (_i8.done) break;
-							_ref8 = _i8.value;
-						}
-
-						var element = _ref8;
-
+					ar.forEachOf(_this4.animatedElements(), function (element) {
 						svg(element).reset();
-					}
+					});
+
 					t.player.end();
 				}, this.elapsedTime());
 

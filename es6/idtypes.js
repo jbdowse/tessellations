@@ -173,10 +173,10 @@ tessellations.load.idTypes = (function loadIdTypes()
 		
 					reset: function()
 					{
-						for (const initialStyle of this.initialStyles() )
+						ar.forEachOf(this.initialStyles(), initialStyle =>
 						{
 							this.style(initialStyle.property, initialStyle.value);
-						}
+						});
 			
 						this
 						.style('display', 'none')

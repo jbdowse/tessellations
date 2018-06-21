@@ -13,8 +13,11 @@ tessellations.load.player = (function loadPlayer()
 	const loadModule = () =>
 	{
 		t.load
+		.arrays()
 		.idTypes()
 		.animation();
+		
+		const ar = t.arrays;
 		
 
 		const _st = { // "state"
@@ -73,10 +76,10 @@ tessellations.load.player = (function loadPlayer()
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
 					
-					for (const action of this.currentAnimation().actions() )
+					ar.forEachOf(this.currentAnimation().actions(), action =>
 					{
 						this.playQueue().push( action() );
-					}
+					});
 				}
 			},
 	
@@ -85,13 +88,15 @@ tessellations.load.player = (function loadPlayer()
 			{
 				// for some reason "this" doesn't work here though it does at play()
 					
-				for (const timeout of _st.playQueue ) {
+				ar.forEachOf(_st.playQueue, timeout =>
+				{
 					window.clearTimeout(timeout);
-				}
+				});
 		
-				for (const shape of _st.currentAnimation.animatedElements() ) {
+				ar.forEachOf(_st.currentAnimation.animatedElements(), shape =>
+				{
 					t.svg(shape).reset();
-				}
+				});
 		
 				t.id('caption').html('');
 				t.id('demo1-title').html('');

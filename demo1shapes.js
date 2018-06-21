@@ -84,7 +84,7 @@ tessellations.build.demo1.styles = function buildDemo1Styles() {
 
 	var buildComponent = function buildComponent() {
 
-		t.load.idTypes().geom();
+		t.load.arrays().idTypes().geom();
 
 		t.initializeDemos();
 
@@ -98,7 +98,8 @@ tessellations.build.demo1.styles = function buildDemo1Styles() {
 			BRTile: '#f36'
 		};
 
-		var svg = t.svg,
+		var ar = t.arrays,
+		    svg = t.svg,
 		    pt = t.demo(1).points,
 		    c = t.demo(1).colors,
 		    scaleStr = t.geom.scaleStr;
@@ -109,67 +110,28 @@ tessellations.build.demo1.styles = function buildDemo1Styles() {
 
 			var allAnimatedShapes = ['graphGrid', 'base', 'carved', 'rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile', 'initPat', 'sq4init', 'sq4flip', 'sq2init', 'sq2flip', 'mirrorLine', 'pats0', 'pats1', 'pats2', 'pats3', 'zoom'];
 
-			for (var _iterator = allAnimatedShapes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-				var _ref;
-
-				if (_isArray) {
-					if (_i >= _iterator.length) break;
-					_ref = _iterator[_i++];
-				} else {
-					_i = _iterator.next();
-					if (_i.done) break;
-					_ref = _i.value;
-				}
-
-				var id = _ref;
-
+			ar.forEachOf(allAnimatedShapes, function (id) {
 				svg(id).initStyle('display', 'none').initStyle('opacity', 0);
-			}
+			});
 		}
 
 		setBaseColor: {
 
 			var baseColorShapes = ['base', 'carved', 'rotator', 'initTile', 'TLTile', 'BLTile', 'BRTile', 'zoom'];
 
-			for (var _iterator2 = baseColorShapes, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-				var _ref2;
-
-				if (_isArray2) {
-					if (_i2 >= _iterator2.length) break;
-					_ref2 = _iterator2[_i2++];
-				} else {
-					_i2 = _iterator2.next();
-					if (_i2.done) break;
-					_ref2 = _i2.value;
-				}
-
-				var _id = _ref2;
-
-				svg(_id).initStyle('fill', c.base);
-			}
+			ar.forEachOf(baseColorShapes, function (id) {
+				svg(id).initStyle('fill', c.base);
+			});
 		}
 
 		setRotationPoint: {
 
 			var BLRotators = ['rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile'];
 
-			for (var _iterator3 = BLRotators, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
-				var _ref3;
-
-				if (_isArray3) {
-					if (_i3 >= _iterator3.length) break;
-					_ref3 = _iterator3[_i3++];
-				} else {
-					_i3 = _iterator3.next();
-					if (_i3.done) break;
-					_ref3 = _i3.value;
-				}
-
-				var _id2 = _ref3;
-
+			ar.forEachOf(BLRotators, function (id) {
 				var origin = t.geom.pxPt(pt.shpBL());
-				svg(_id2).initStyle('transformOrigin', origin);
-			}
+				svg(id).initStyle('transformOrigin', origin);
+			});
 		}
 
 		setSquarePositions: {

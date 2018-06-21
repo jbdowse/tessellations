@@ -53,11 +53,11 @@ tessellations.load.animation = (function loadAnimation()
 
 				addAnyInitialStylesIfChanging: (idStr, props) =>
 				{
-					for (const prop of props)
+					ar.forEachOf(props, prop =>
 					{
 						const shape = svg(idStr);
 						shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
-					}
+					});
 				},
 
 				captionTiming: {
@@ -121,7 +121,7 @@ tessellations.load.animation = (function loadAnimation()
 			{
 				const ids = ar.lift(idStrs);
 		
-				for (const id of ids)
+				ar.forEachOf(ids, id =>
 				{
 					this.addElementIfNew(id);
 					
@@ -132,7 +132,7 @@ tessellations.load.animation = (function loadAnimation()
 						vals: newValues,
 						transTimes: transTimes,
 					});
-				}
+				});
 	
 				const maxTime = ar.arrayMax(transTimes);
 				this.wait(maxTime);
@@ -147,19 +147,20 @@ tessellations.load.animation = (function loadAnimation()
 					transTime = optTransTime || 0,
 					idSet = ar.lift(idStrs);
 				
-				for (const id of idSet) {
+				ar.forEachOf(idSet, id => {
 					this.addElementIfNew(id);
-				}
+				});
 		
-				this.enqueue(() =>
-				{
-					for (const id of idSet) {
-						svg(id).on();
-					}
-				},
-				this.elapsedTime());
+				this.enqueue(
+					() => {
+						ar.forEachOf(idSet, id => {
+							svg(id).on();
+						});
+					},
+					this.elapsedTime()
+				);
 	
-				for (const id of idSet)
+				ar.forEachOf(idSet, id =>
 				{
 					this.transition({
 						start: this.elapsedTime(),
@@ -168,7 +169,7 @@ tessellations.load.animation = (function loadAnimation()
 						vals: 1,
 						transTimes: transTime,
 					});
-				}
+				});
 	
 				this.wait(transTime);
 				
@@ -182,7 +183,7 @@ tessellations.load.animation = (function loadAnimation()
 					transTime = optTransTime || 0,
 					idSet = ar.lift(idStrs);
 		
-				for (const id of idSet)
+				ar.forEachOf(idSet, id =>
 				{
 					this.addElementIfNew(id);
 					
@@ -193,17 +194,18 @@ tessellations.load.animation = (function loadAnimation()
 						vals: 0,
 						transTime: transTime,
 					});
-				}
+				})
 	
 				this.wait(transTime);
 	
-				this.enqueue(() =>
-				{
-					for (const id of idSet) {
-						svg(id).off();
-					}
-				},
-				this.elapsedTime());
+				this.enqueue(
+					() => {
+						ar.forEachOf(idSet, id => {
+							svg(id).off();
+						});
+					},
+					this.elapsedTime()
+				);
 	
 				return this;
 			},
@@ -213,11 +215,12 @@ tessellations.load.animation = (function loadAnimation()
 		
 				this.addElementIfNew(idStr);
 	
-				this.enqueue(() =>
-				{
-					svg(idStr).on();
-				},
-				this.elapsedTime());
+				this.enqueue(
+					() => {
+						svg(idStr).on();
+					},
+					this.elapsedTime()
+				);
 	
 				return this;
 			},
@@ -227,24 +230,27 @@ tessellations.load.animation = (function loadAnimation()
 		
 				const time = this.elapsedTime();
 		
-				this.enqueue( function hideCaption()
-				{
-					cap.style('opacity', 0);
-				},
-				time);
+				this.enqueue(
+					function hideCaption() {
+						cap.style('opacity', 0);
+					},
+					time
+				);
 	
-				this.enqueue( function changeCaptionText()
-				{
-					cap.html(str);
-					titleCap.html(str);
-				},
-				time + _ut.captionTiming.change() );
+				this.enqueue(
+					function changeCaptionText() {
+						cap.html(str);
+						titleCap.html(str);
+					},
+					time + _ut.captionTiming.change()
+				);
 	
-				this.enqueue( function fadeInCaption()
-				{
-					cap.style('opacity', 1);
-				},
-				time + _ut.captionTiming.show() );
+				this.enqueue(
+					function fadeInCaption() {
+						cap.style('opacity', 1);
+					},
+					time + _ut.captionTiming.show()
+				);
 
 				return this;
 			},
@@ -266,14 +272,17 @@ tessellations.load.animation = (function loadAnimation()
 			{
 				// this in inner arrow fn should refer to this object:
 				
-				this.enqueue(() =>
-				{
-					for (const element of this.animatedElements()) {
-						svg(element).reset();
-					}
-					t.player.end();
-				},
-				this.elapsedTime());
+				this.enqueue(
+					() => {
+						ar.forEachOf(this.animatedElements(), element =>
+						{
+							svg(element).reset();
+						});
+					
+						t.player.end();
+					},
+					this.elapsedTime()
+				);
 		
 				return this;
 			},
@@ -291,20 +300,22 @@ tessellations.load.animation = (function loadAnimation()
 		
 				_ut.addAnyInitialStylesIfChanging(trans.id, propSet);
 		
-				this.enqueue(() =>
-				{
-					svg(trans.id).style('transitionDuration', reducedTimesList);
-					svg(trans.id).style('transitionProperty', propsList);
-				},
-				trans.start);
+				this.enqueue(
+					() => {
+						svg(trans.id).style('transitionDuration', reducedTimesList);
+						svg(trans.id).style('transitionProperty', propsList);
+					},
+					trans.start
+				);
 		
-				this.enqueue(() =>
-				{
-					for (let i = 0; i < propSet.length; ++i) {
-						svg(trans.id).style(propSet[i], valSet[i]);
-					}
-				},
-				trans.start + _ut.transDelay_ms);
+				this.enqueue(
+					() => {
+						for (let i = 0; i < propSet.length; ++i) {
+							svg(trans.id).style(propSet[i], valSet[i]);
+						}
+					},
+					trans.start + _ut.transDelay_ms
+				);
 	
 				return this;
 			},

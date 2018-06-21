@@ -23,6 +23,12 @@ tessellations.load.arrays = function loadArrays() {
 				return Array.isArray(x) ? x : [x];
 			},
 
+			forEachOf: function forEachOf(arr, func) {
+				for (var i = 0; i < arr.length; ++i) {
+					func(arr[i]);
+				}
+			},
+
 			arrayMax: function arrayMax(arr) {
 				return Array.isArray(arr) ? arr.reduce(function (a, b) {
 					return Math.max(a, b);
