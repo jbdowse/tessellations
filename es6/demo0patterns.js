@@ -115,11 +115,13 @@ var tessellations = (function demo0patternsModule(t)
 		}
 
 
-		buildPatternSets: {
+		buildPatternSets:
+		{
 			const setCount = 4;
-			for (let setIndex = 0; setIndex < setCount; ++setIndex) {
+			
+			ar.forCount(setCount, setIndex => {
 				buildPatternSet(setIndex);
-			}
+			});
 		}
 		
 		

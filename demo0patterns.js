@@ -76,9 +76,10 @@ var tessellations = function demo0patternsModule(t) {
 
 		buildPatternSets: {
 			var setCount = 4;
-			for (var setIndex = 0; setIndex < setCount; ++setIndex) {
+
+			ar.forCount(setCount, function (setIndex) {
 				buildPatternSet(setIndex);
-			}
+			});
 		}
 
 		return t.demo(0);

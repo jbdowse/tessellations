@@ -303,9 +303,9 @@ var tessellations = (function animationModule(t)
 	
 				this.enqueue(
 					() => {
-						for (let i = 0; i < propSet.length; ++i) {
+						ar.forCount(propSet.length, i => {
 							svg(trans.id).style(propSet[i], valSet[i]);
-						}
+						});
 					},
 					trans.start + _ut.transDelay_ms
 				);

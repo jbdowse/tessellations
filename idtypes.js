@@ -216,7 +216,8 @@ var tessellations = function idTypesModule(t) {
 
 	var _getGeom = function _getGeom() {
 
-		var svg = t.idTypes().svg();
+		var ar = t.arrays(),
+		    svg = t.idTypes().svg();
 
 		var geom = {
 
@@ -233,10 +234,10 @@ var tessellations = function idTypesModule(t) {
 			ptStr: function ptStr(ptList) {
 				var str = '';
 
-				for (var i = 0; i < ptList.length; ++i) {
+				ar.forCount(ptList.length, function (i) {
 					var currentPt = ptList[i];
 					str += currentPt[0] + ',' + currentPt[1] + ' ';
-				}
+				});
 
 				return str;
 			},

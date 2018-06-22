@@ -15,6 +15,7 @@ var tessellations = (function demo0shapesModule(t)
 	const _buildShapes = () => {
 		
 		const
+			ar = t.arrays(),
 			svg = t.idTypes().svg(),
 			pt = t.demo(0).points(),
 			g = t.geom();
@@ -27,9 +28,11 @@ var tessellations = (function demo0shapesModule(t)
 			g.line('gridlineHoriz', pt.gridTL(), pt.gridTR() );
 			g.line('gridlineVert', pt.gridTL(), pt.gridBL() );
 
-			const gridCell = pt.gridCell();
+			const
+				gridCell = pt.gridCell(),
+				lineCount = pt.gridSubdivs() + 1;
 
-			for (let i = 0; i <= pt.gridSubdivs(); ++i) {
+			ar.forCount(lineCount, i => {
 
 				svg('graphGrid')
 					.defineAnon('use', [
@@ -42,7 +45,7 @@ var tessellations = (function demo0shapesModule(t)
 						'x', i * gridCell,
 						'y', 0
 					]);
-			}
+			});
 		}
 
 
@@ -229,11 +232,11 @@ var tessellations = (function demo0shapesModule(t)
 				'sq4flip'
 			];
 
-			for (let i = 0; i < laterSquares.length; ++i)
+			ar.forCount(laterSquares.length, i =>
 			{
 				const xpos = pt.sq4(i + 1);
 				svg(laterSquares[i]).initStyle( 'transform', geom.shiftTo(xpos, 0) );
-			}
+			});
 
 		}
 

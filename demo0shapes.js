@@ -15,7 +15,8 @@ var tessellations = function demo0shapesModule(t) {
 
 	var _buildShapes = function _buildShapes() {
 
-		var svg = t.idTypes().svg(),
+		var ar = t.arrays(),
+		    svg = t.idTypes().svg(),
 		    pt = t.demo(0).points(),
 		    g = t.geom();
 
@@ -26,12 +27,13 @@ var tessellations = function demo0shapesModule(t) {
 			g.line('gridlineHoriz', pt.gridTL(), pt.gridTR());
 			g.line('gridlineVert', pt.gridTL(), pt.gridBL());
 
-			var gridCell = pt.gridCell();
+			var gridCell = pt.gridCell(),
+			    lineCount = pt.gridSubdivs() + 1;
 
-			for (var i = 0; i <= pt.gridSubdivs(); ++i) {
+			ar.forCount(lineCount, function (i) {
 
 				svg('graphGrid').defineAnon('use', ['href', '#gridlineHoriz', 'x', 0, 'y', i * gridCell]).defineAnon('use', ['href', '#gridlineVert', 'x', i * gridCell, 'y', 0]);
-			}
+			});
 		}
 
 		buildMirrorLine: {
@@ -130,10 +132,10 @@ var tessellations = function demo0shapesModule(t) {
 
 			var laterSquares = ['sq2init', 'sq2flip', 'sq4flip'];
 
-			for (var i = 0; i < laterSquares.length; ++i) {
+			ar.forCount(laterSquares.length, function (i) {
 				var xpos = pt.sq4(i + 1);
 				svg(laterSquares[i]).initStyle('transform', geom.shiftTo(xpos, 0));
-			}
+			});
 		}
 
 		setInitialScales: {

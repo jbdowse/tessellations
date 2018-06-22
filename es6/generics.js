@@ -94,6 +94,7 @@ var tessellations = (function genericsModule(t)
 	
 
 	
+	
 	const _getBuildType = () => {
 	
 		const ar = t.arrays();
@@ -110,7 +111,7 @@ var tessellations = (function genericsModule(t)
 		};
 
 
-		return {
+		const _typeBuilders = {
 
 			basic: type =>
 				() => {
@@ -143,7 +144,10 @@ var tessellations = (function genericsModule(t)
 		
 				})(),
 			
-		}; // end return obj
+		}; // end _typeBuilders
+		
+		
+		return _typeBuilders;
 	
 	}; // end _getBuildType
 	

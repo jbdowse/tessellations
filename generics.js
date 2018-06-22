@@ -97,7 +97,7 @@ var tessellations = function genericsModule(t) {
 			return newObj;
 		};
 
-		return {
+		var _typeBuilders = {
 
 			basic: function basic(type) {
 				return function () {
@@ -128,7 +128,10 @@ var tessellations = function genericsModule(t) {
 				}();
 			}
 
-		}; // end return obj
+		}; // end _typeBuilders
+
+
+		return _typeBuilders;
 	}; // end _getBuildType
 
 	t.buildType = function () {
