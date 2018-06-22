@@ -1,183 +1,155 @@
 // Type builders + array functions
 
-var tessellations = tessellations || {};
-
-
-tessellations.arrays = (function getArrays()
+var tessellations = (function genericsModule(t)
 {
-	
-	const unit = {
-		
-		isLoaded: false,
-		
-		contents: null,
-		
-		
-		build: () => ({
-			
-			lift: x => Array.isArray(x)? x : [x],
-	
-	
-			forEachOf: (arr, func) =>
-			{
-				for (let i = 0; i < arr.length; ++i)
-				{
-					func(arr[i]);
-				}
-			},
-			
-			
-			forCount: (count, func) =>
-			{
-				for (let i = 0; i < count; ++i)
-				{
-					func(i);
-				}
-			},
-	
+	/* build is now a function, and gets .hasRun & .value properties added to it;
+	this requires storing each build function in a variable first and then
+	feeding that to t.loadOnce, rather than using the function literal as
+	argument to t.loadOnce */
 
-			arrayMax: arr => Array.isArray(arr) ?
-				arr.reduce((a, b) => Math.max(a, b)) :
-				arr,
+	t.loadOnce = build =>
+	{
+		if (! build.hasRun) {
+			build.value = build();
+			build.hasRun = true;
+		}
 
-
-			csv: arr => arr.join(', '),
-
-
-			addIfNew: (arr, element) =>
-			{
-				if (arr.indexOf(element) === -1) {
-					arr.push(element);
-				}
-			},
-
-
-			addIfPredicate: (arr, element, predicate) =>
-			{
-				if (predicate) {
-					arr.push(element);
-				}
-			},
-
-
-			indexOfKey: (arr, key, value) =>
-			{
-				for (let i = 0; i < arr.length; ++i) {
-					if (arr[i][key] === value) {
-						return i;
-					}
-				}
-				return -1;
-			},
+		return build.value;
+	};
 	
 	
-			findByKey: (arr, key, value) =>
-			{
-				for (let i = 0; i < arr.length; ++i) {
-					if (arr[i][key] === value) {
-						return arr[i];
-					}
-				}
-				return null;
-			},
-			
-		}), // end build
+
+	const _getArrays = () => ({
 		
-		
-		loadOnce: () =>
+	
+		lift: x => Array.isArray(x)? x : [x],
+
+
+		forEachOf: (arr, func) =>
 		{
-			if (! unit.isLoaded) {
-				unit.contents = unit.build();
-				unit.isLoaded = true;
-			}
-			
-			return unit.contents;
-		},
-		
-	}; // end unit
-	
-	
-	return unit.loadOnce;
-	
-})();
-
-
-
-tessellations.buildType = (function getBuildType()
-{
-	const unit = {
-		
-		isLoaded: false,
-		
-		contents: null,
-		
-		build: () => {
-			
-			const ar = tessellations.arrays();
-			
-			const _copyPrototypeFields = proto =>
+			for (let i = 0; i < arr.length; ++i)
 			{
-				const newObj = {};
-			
-				for (const key in proto) {
-					newObj[key] = proto[key];
-				}
-			
-				return newObj;		
-			};
-
-
-			return {
+				func(arr[i]);
+			}
+		},
 	
-				basic: type =>
-					() => {
-						const newObj = _copyPrototypeFields(type.proto);
-						type.addInstanceVars(newObj);
-						return newObj;
-					},
+	
+		forCount: (count, func) =>
+		{
+			for (let i = 0; i < count; ++i)
+			{
+				func(i);
+			}
+		},
 
 
-				cachingIdType: type =>
-					(() => {
-						
-						const cache = []; // private, shared by entire type ("static")
+		arrayMax: arr => Array.isArray(arr) ?
+			arr.reduce((a, b) => Math.max(a, b)) :
+			arr,
 
-						const createObject = idStr =>
-						{
-							const newObj = _copyPrototypeFields(type.proto);
-							type.addInstanceVars(newObj, idStr);
-							cache.push(newObj);
-					    	return newObj;
-						};
 
-						const getOrCreate = idStr =>
-						{
-							const cachedObj = ar.findByKey(cache, '_id', idStr);
-							return cachedObj || createObject(idStr);
-						};
-					
-						return getOrCreate;
+		csv: arr => arr.join(', '),
+
+
+		addIfNew: (arr, element) =>
+		{
+			if (arr.indexOf(element) === -1) {
+				arr.push(element);
+			}
+		},
+
+
+		addIfPredicate: (arr, element, predicate) =>
+		{
+			if (predicate) {
+				arr.push(element);
+			}
+		},
+
+
+		indexOfKey: (arr, key, value) =>
+		{
+			for (let i = 0; i < arr.length; ++i) {
+				if (arr[i][key] === value) {
+					return i;
+				}
+			}
+			return -1;
+		},
+
+
+		findByKey: (arr, key, value) =>
+		{
+			for (let i = 0; i < arr.length; ++i) {
+				if (arr[i][key] === value) {
+					return arr[i];
+				}
+			}
+			return null;
+		},
+	
+	}); // end _getArrays
+	
+	t.arrays = () => t.loadOnce(_getArrays);
+	
+
+	
+	const _getBuildType = () => {
+	
+		const ar = t.arrays();
+	
+		const _copyPrototypeFields = proto =>
+		{
+			const newObj = {};
+	
+			for (const key in proto) {
+				newObj[key] = proto[key];
+			}
+	
+			return newObj;		
+		};
+
+
+		return {
+
+			basic: type =>
+				() => {
+					const newObj = _copyPrototypeFields(type.proto);
+					type.addInstanceVars(newObj);
+					return newObj;
+				},
+
+
+			cachingIdType: type =>
+				(() => {
 				
-					})(),
-					
-			}; // end build return obj
+					const cache = []; // private, shared by entire type ("static")
+
+					const createObject = idStr =>
+					{
+						const newObj = _copyPrototypeFields(type.proto);
+						type.addInstanceVars(newObj, idStr);
+						cache.push(newObj);
+				    	return newObj;
+					};
+
+					const getOrCreate = idStr =>
+					{
+						const cachedObj = ar.findByKey(cache, '_id', idStr);
+						return cachedObj || createObject(idStr);
+					};
 			
-		}, // end build
+					return getOrCreate;
 		
-		
-		loadOnce: () =>
-		{
-			if (! unit.isLoaded) {
-				unit.contents = unit.build();
-				unit.isLoaded = true;
-			}
+				})(),
 			
-			return unit.contents;
-		},
-		
-	}; // end unit
+		}; // end return obj
+	
+	}; // end _getBuildType
+	
+	t.buildType = () => t.loadOnce(_getBuildType);
 	
 	
-	return unit.loadOnce;
+	return t;
 	
-})();
+})(tessellations || {});
