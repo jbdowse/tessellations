@@ -21,93 +21,116 @@ var tessellations = (function demo0shapesModule(t)
 			g = t.geom();
 
 
-		// using labeled code blocks instead of IIFEs for concision:
+		const _build = {
+			
+		
+			graphGrid: () =>
+			{
+				g.line('gridlineHoriz', pt.gridTL(), pt.gridTR() );
+				g.line('gridlineVert', pt.gridTL(), pt.gridBL() );
 
-		buildGraphGrid: {
+				const
+					gridCell = pt.gridCell(),
+					lineCount = pt.gridSubdivs() + 1;
 
-			g.line('gridlineHoriz', pt.gridTL(), pt.gridTR() );
-			g.line('gridlineVert', pt.gridTL(), pt.gridBL() );
+				ar.forCount(lineCount, i => {
 
-			const
-				gridCell = pt.gridCell(),
-				lineCount = pt.gridSubdivs() + 1;
-
-			ar.forCount(lineCount, i => {
-
-				svg('graphGrid')
-					.defineAnon('use', [
-						'href', '#gridlineHoriz',
-						'x', 0,
-						'y', i * gridCell
-					])
-					.defineAnon('use', [
-						'href', '#gridlineVert',
-						'x', i * gridCell,
-						'y', 0
-					]);
-			});
-		}
-
-
-		buildMirrorLine: {
-
-			const radius = 2 * pt.sqLength();
-			const offsetX = pt.lineCx();
-			const offsetY = pt.lineCy();
-			const lineStartY = -radius + offsetY;
-			const lineEndY = radius + offsetY;
-
-			g.line('mirrorLine', [offsetX, lineStartY], [offsetX, lineEndY]);
-
-		}
+					svg('graphGrid')
+						.defineAnon('use', [
+							'href', '#gridlineHoriz',
+							'x', 0,
+							'y', i * gridCell
+						])
+						.defineAnon('use', [
+							'href', '#gridlineVert',
+							'x', i * gridCell,
+							'y', 0
+						]);
+				});
+				
+				return _build;
+			},
 
 
-		definePolygonPoints: {
+			mirrorLine: () =>
+			{
+				const
+					radius = 2 * pt.sqLength(),
+					offsetX = pt.lineCx(),
+					offsetY = pt.lineCy(),
+					lineStartY = -radius + offsetY,
+					lineEndY = radius + offsetY;
 
-			g.points('base', [
-				pt.shpTL(),
-				pt.shpBL(),
-				pt.shpBR()
-			]);
+				g.line('mirrorLine', [offsetX, lineStartY], [offsetX, lineEndY]);
+				
+				return _build;
+			},
 
-			g.points('carved', [
-				pt.shpTL(),
-				pt.shpBL(),
-				pt.shpBtmBump(),
-				pt.shpBR()
-			]);
 
-			g.points('rotator', [
-				pt.shpBL(),
-				pt.shpBtmBump(),
-				pt.shpBR()
-			]);
+			polygonPoints: () =>
+			{
+				g.points('base', [
+					pt.shpTL(),
+					pt.shpBL(),
+					pt.shpBR()
+				]);
 
-			g.points('tile', [
-				pt.shpTL(),
-				pt.shpLeftBump(),
-				pt.shpBL(),
-				pt.shpBtmBump(),
-				pt.shpBR()
-			]);
+				g.points('carved', [
+					pt.shpTL(),
+					pt.shpBL(),
+					pt.shpBtmBump(),
+					pt.shpBR()
+				]);
 
-			g.points('singleTile', [
-				pt.sqTL(),
-				pt.sqTLBump(),
-				pt.center(),
-				pt.sqTRBump(),
-				pt.sqTR()
-			]);
+				g.points('rotator', [
+					pt.shpBL(),
+					pt.shpBtmBump(),
+					pt.shpBR()
+				]);
 
-			g.points('doubleTile', [
-				pt.sqTL(),
-				pt.sqTLBump(),
-				pt.sqBRBump(),
-				pt.sqBR(),
-				pt.sqTR()
-			]);
+				g.points('tile', [
+					pt.shpTL(),
+					pt.shpLeftBump(),
+					pt.shpBL(),
+					pt.shpBtmBump(),
+					pt.shpBR()
+				]);
 
-		}
+				g.points('singleTile', [
+					pt.sqTL(),
+					pt.sqTLBump(),
+					pt.center(),
+					pt.sqTRBump(),
+					pt.sqTR()
+				]);
+
+				g.points('doubleTile', [
+					pt.sqTL(),
+					pt.sqTLBump(),
+					pt.sqBRBump(),
+					pt.sqBR(),
+					pt.sqTR()
+				]);
+				
+				return _build;
+			},
+			
+			
+			allShapes: () =>
+			{
+				_build
+					.graphGrid()
+					.mirrorLine()
+					.polygonPoints();
+				
+				return _build;
+			},
+		
+		}; // end _build
+		
+		
+		_build.allShapes();
+		
 		
 		return t.demo(0);
 
@@ -117,10 +140,12 @@ var tessellations = (function demo0shapesModule(t)
 
 
 
+
 	/* this doesn't really need the full loading infrastructure
 	but keeping it in case it gains the need for lazy loading: */
 	
-	const _getColors = () => ({
+	const _getColors = () =>
+	({
 		base: '#36c',
 		rotator: '#c3c',
 		TLTile: '#3c6',
@@ -129,6 +154,7 @@ var tessellations = (function demo0shapesModule(t)
 	});
 	
 	t.demo(0).colors = () => t.loadOnce(_getColors);
+
 
 
 
@@ -146,114 +172,145 @@ var tessellations = (function demo0shapesModule(t)
 			.buildShapes()
 			.buildPatterns();
 
-
-		getId('caption').style('transitionTimingFunction', 'linear');
-
-
-		hideAll: {
-
-			const allAnimatedShapes = [
-				'graphGrid',
-				'base',
-				'carved',
-				'rotator',
-				'diamond',
-				'TLTile',
-				'BLTile',
-				'BRTile',
-				'initPat',
-				'sq4init',
-				'sq4flip',
-				'sq2init',
-				'sq2flip',
-				'mirrorLine',
-				'pats0',
-				'pats1',
-				'pats2',
-				'pats3',
-				'zoom'
-			];
-
-			ar.forEachOf(allAnimatedShapes, id =>
+		
+		const _init = {
+			
+			
+			setCaptionTiming: () =>
 			{
-				svg(id)
-					.initStyle('display', 'none')
-					.initStyle('opacity', 0);
-			});
-
-		}
+				getId('caption').style('transitionTimingFunction', 'linear');
+				return _init;
+			},
 
 
-		setBaseColor: {
-
-			const baseColorShapes = [
-				'base',
-				'carved',
-				'rotator',
-				'initTile',
-				'TLTile',
-				'BLTile',
-				'BRTile',
-				'zoom'
-			];
-
-			ar.forEachOf(baseColorShapes, id =>
+			hideAll: () =>
 			{
-				svg(id).initStyle('fill', c.base);
-			});
+				const allAnimatedShapes = [
+					'graphGrid',
+					'base',
+					'carved',
+					'rotator',
+					'diamond',
+					'TLTile',
+					'BLTile',
+					'BRTile',
+					'initPat',
+					'sq4init',
+					'sq4flip',
+					'sq2init',
+					'sq2flip',
+					'mirrorLine',
+					'pats0',
+					'pats1',
+					'pats2',
+					'pats3',
+					'zoom'
+				];
 
-		}
+				ar.forEachOf(allAnimatedShapes, id =>
+				{
+					svg(id)
+						.initStyle('display', 'none')
+						.initStyle('opacity', 0);
+				});
+
+				return _init;
+			},
 
 
-		setRotationPoint: {
-
-			const BLRotators = [
-				'rotator',
-				'diamond',
-				'TLTile',
-				'BLTile',
-				'BRTile'
-			];
-
-			ar.forEachOf(BLRotators, id =>
+			setBaseColor: () =>
 			{
-				const origin = geom.pxPt( pt.shpBL() );
-				svg(id).initStyle('transformOrigin', origin);
-			});
+				const baseColorShapes = [
+					'base',
+					'carved',
+					'rotator',
+					'initTile',
+					'TLTile',
+					'BLTile',
+					'BRTile',
+					'zoom'
+				];
 
-		}
+				ar.forEachOf(baseColorShapes, id =>
+				{
+					svg(id).initStyle('fill', c.base);
+				});
+
+				return _init;
+			},
 
 
-		setSquarePositions: {
-
-			const laterSquares = [
-				'sq2init',
-				'sq2flip',
-				'sq4flip'
-			];
-
-			ar.forCount(laterSquares.length, i =>
+			setRotationPoint: () =>
 			{
-				const xpos = pt.sq4(i + 1);
-				svg(laterSquares[i]).initStyle( 'transform', geom.shiftTo(xpos, 0) );
-			});
+				const BLRotators = [
+					'rotator',
+					'diamond',
+					'TLTile',
+					'BLTile',
+					'BRTile'
+				];
 
-		}
+				ar.forEachOf(BLRotators, id =>
+				{
+					const origin = geom.pxPt( pt.shpBL() );
+					svg(id).initStyle('transformOrigin', origin);
+				});
+
+				return _init;
+			},
 
 
-		setInitialScales: {
+			setSquarePositions: () =>
+			{
+				const laterSquares = [
+					'sq2init',
+					'sq2flip',
+					'sq4flip'
+				];
 
-			svg('sq4init').initStyle(
-				'transform',
-				geom.scaleStr(pt.sqScaleUp(), pt.sqScaleUp())
-			);
+				ar.forCount(laterSquares.length, i =>
+				{
+					const xpos = pt.sq4(i + 1);
+					svg(laterSquares[i]).initStyle( 'transform', geom.shiftTo(xpos, 0) );
+				});
 
-			svg('zoom').initStyle(
-				'transform',
-				geom.scaleStr(pt.zoomSmall(), pt.zoomSmall())
-			);
+				return _init;
+			},
 
-		}
+
+			setInitialScales: () =>
+			{
+				svg('sq4init').initStyle(
+					'transform',
+					geom.scaleStr(pt.sqScaleUp(), pt.sqScaleUp())
+				);
+
+				svg('zoom').initStyle(
+					'transform',
+					geom.scaleStr(pt.zoomSmall(), pt.zoomSmall())
+				);
+
+				return _init;
+			},
+			
+			
+			allStyles: () =>
+			{
+				_init
+					.hideAll()
+					.setCaptionTiming()
+					.setBaseColor()
+					.setRotationPoint()
+					.setSquarePositions()
+					.setInitialScales();
+					
+				return _init;
+			},
+			
+		}; // end _init
+		
+		
+		_init.allStyles();
 		
 		
 		return t.demo(0);

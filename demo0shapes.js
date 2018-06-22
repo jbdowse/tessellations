@@ -20,47 +20,61 @@ var tessellations = function demo0shapesModule(t) {
 		    pt = t.demo(0).points(),
 		    g = t.geom();
 
-		// using labeled code blocks instead of IIFEs for concision:
+		var _build = {
 
-		buildGraphGrid: {
+			graphGrid: function graphGrid() {
+				g.line('gridlineHoriz', pt.gridTL(), pt.gridTR());
+				g.line('gridlineVert', pt.gridTL(), pt.gridBL());
 
-			g.line('gridlineHoriz', pt.gridTL(), pt.gridTR());
-			g.line('gridlineVert', pt.gridTL(), pt.gridBL());
+				var gridCell = pt.gridCell(),
+				    lineCount = pt.gridSubdivs() + 1;
 
-			var gridCell = pt.gridCell(),
-			    lineCount = pt.gridSubdivs() + 1;
+				ar.forCount(lineCount, function (i) {
 
-			ar.forCount(lineCount, function (i) {
+					svg('graphGrid').defineAnon('use', ['href', '#gridlineHoriz', 'x', 0, 'y', i * gridCell]).defineAnon('use', ['href', '#gridlineVert', 'x', i * gridCell, 'y', 0]);
+				});
 
-				svg('graphGrid').defineAnon('use', ['href', '#gridlineHoriz', 'x', 0, 'y', i * gridCell]).defineAnon('use', ['href', '#gridlineVert', 'x', i * gridCell, 'y', 0]);
-			});
-		}
+				return _build;
+			},
 
-		buildMirrorLine: {
+			mirrorLine: function mirrorLine() {
+				var radius = 2 * pt.sqLength(),
+				    offsetX = pt.lineCx(),
+				    offsetY = pt.lineCy(),
+				    lineStartY = -radius + offsetY,
+				    lineEndY = radius + offsetY;
 
-			var radius = 2 * pt.sqLength();
-			var offsetX = pt.lineCx();
-			var offsetY = pt.lineCy();
-			var lineStartY = -radius + offsetY;
-			var lineEndY = radius + offsetY;
+				g.line('mirrorLine', [offsetX, lineStartY], [offsetX, lineEndY]);
 
-			g.line('mirrorLine', [offsetX, lineStartY], [offsetX, lineEndY]);
-		}
+				return _build;
+			},
 
-		definePolygonPoints: {
+			polygonPoints: function polygonPoints() {
+				g.points('base', [pt.shpTL(), pt.shpBL(), pt.shpBR()]);
 
-			g.points('base', [pt.shpTL(), pt.shpBL(), pt.shpBR()]);
+				g.points('carved', [pt.shpTL(), pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
 
-			g.points('carved', [pt.shpTL(), pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
+				g.points('rotator', [pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
 
-			g.points('rotator', [pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
+				g.points('tile', [pt.shpTL(), pt.shpLeftBump(), pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
 
-			g.points('tile', [pt.shpTL(), pt.shpLeftBump(), pt.shpBL(), pt.shpBtmBump(), pt.shpBR()]);
+				g.points('singleTile', [pt.sqTL(), pt.sqTLBump(), pt.center(), pt.sqTRBump(), pt.sqTR()]);
 
-			g.points('singleTile', [pt.sqTL(), pt.sqTLBump(), pt.center(), pt.sqTRBump(), pt.sqTR()]);
+				g.points('doubleTile', [pt.sqTL(), pt.sqTLBump(), pt.sqBRBump(), pt.sqBR(), pt.sqTR()]);
 
-			g.points('doubleTile', [pt.sqTL(), pt.sqTLBump(), pt.sqBRBump(), pt.sqBR(), pt.sqTR()]);
-		}
+				return _build;
+			},
+
+			allShapes: function allShapes() {
+				_build.graphGrid().mirrorLine().polygonPoints();
+
+				return _build;
+			}
+
+		}; // end _build
+
+
+		_build.allShapes();
 
 		return t.demo(0);
 	}; // end _buildShapes
@@ -98,52 +112,73 @@ var tessellations = function demo0shapesModule(t) {
 
 		t.demo(0).buildShapes().buildPatterns();
 
-		getId('caption').style('transitionTimingFunction', 'linear');
+		var _init = {
 
-		hideAll: {
+			setCaptionTiming: function setCaptionTiming() {
+				getId('caption').style('transitionTimingFunction', 'linear');
+				return _init;
+			},
 
-			var allAnimatedShapes = ['graphGrid', 'base', 'carved', 'rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile', 'initPat', 'sq4init', 'sq4flip', 'sq2init', 'sq2flip', 'mirrorLine', 'pats0', 'pats1', 'pats2', 'pats3', 'zoom'];
+			hideAll: function hideAll() {
+				var allAnimatedShapes = ['graphGrid', 'base', 'carved', 'rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile', 'initPat', 'sq4init', 'sq4flip', 'sq2init', 'sq2flip', 'mirrorLine', 'pats0', 'pats1', 'pats2', 'pats3', 'zoom'];
 
-			ar.forEachOf(allAnimatedShapes, function (id) {
-				svg(id).initStyle('display', 'none').initStyle('opacity', 0);
-			});
-		}
+				ar.forEachOf(allAnimatedShapes, function (id) {
+					svg(id).initStyle('display', 'none').initStyle('opacity', 0);
+				});
 
-		setBaseColor: {
+				return _init;
+			},
 
-			var baseColorShapes = ['base', 'carved', 'rotator', 'initTile', 'TLTile', 'BLTile', 'BRTile', 'zoom'];
+			setBaseColor: function setBaseColor() {
+				var baseColorShapes = ['base', 'carved', 'rotator', 'initTile', 'TLTile', 'BLTile', 'BRTile', 'zoom'];
 
-			ar.forEachOf(baseColorShapes, function (id) {
-				svg(id).initStyle('fill', c.base);
-			});
-		}
+				ar.forEachOf(baseColorShapes, function (id) {
+					svg(id).initStyle('fill', c.base);
+				});
 
-		setRotationPoint: {
+				return _init;
+			},
 
-			var BLRotators = ['rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile'];
+			setRotationPoint: function setRotationPoint() {
+				var BLRotators = ['rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile'];
 
-			ar.forEachOf(BLRotators, function (id) {
-				var origin = geom.pxPt(pt.shpBL());
-				svg(id).initStyle('transformOrigin', origin);
-			});
-		}
+				ar.forEachOf(BLRotators, function (id) {
+					var origin = geom.pxPt(pt.shpBL());
+					svg(id).initStyle('transformOrigin', origin);
+				});
 
-		setSquarePositions: {
+				return _init;
+			},
 
-			var laterSquares = ['sq2init', 'sq2flip', 'sq4flip'];
+			setSquarePositions: function setSquarePositions() {
+				var laterSquares = ['sq2init', 'sq2flip', 'sq4flip'];
 
-			ar.forCount(laterSquares.length, function (i) {
-				var xpos = pt.sq4(i + 1);
-				svg(laterSquares[i]).initStyle('transform', geom.shiftTo(xpos, 0));
-			});
-		}
+				ar.forCount(laterSquares.length, function (i) {
+					var xpos = pt.sq4(i + 1);
+					svg(laterSquares[i]).initStyle('transform', geom.shiftTo(xpos, 0));
+				});
 
-		setInitialScales: {
+				return _init;
+			},
 
-			svg('sq4init').initStyle('transform', geom.scaleStr(pt.sqScaleUp(), pt.sqScaleUp()));
+			setInitialScales: function setInitialScales() {
+				svg('sq4init').initStyle('transform', geom.scaleStr(pt.sqScaleUp(), pt.sqScaleUp()));
 
-			svg('zoom').initStyle('transform', geom.scaleStr(pt.zoomSmall(), pt.zoomSmall()));
-		}
+				svg('zoom').initStyle('transform', geom.scaleStr(pt.zoomSmall(), pt.zoomSmall()));
+
+				return _init;
+			},
+
+			allStyles: function allStyles() {
+				_init.hideAll().setCaptionTiming().setBaseColor().setRotationPoint().setSquarePositions().setInitialScales();
+
+				return _init;
+			}
+
+		}; // end _init
+
+
+		_init.allStyles();
 
 		return t.demo(0);
 	}; // end _buildStyles

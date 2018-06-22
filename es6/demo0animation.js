@@ -69,7 +69,6 @@ var tessellations = (function demo0animationModule(t)
 		.hide('diamond', 2)
 		.rewind(2)
 		.show('sq4init', 2)
-		.hide(['diamond', 'BRTile', 'BLTile', 'TLTile']) // arrays allowed
 		.wait(1)
 		.to('sq4init', 'transform', 'scale(1, 1)', 1)
 		.rewind(1)

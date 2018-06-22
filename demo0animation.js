@@ -32,8 +32,7 @@ var tessellations = function demo0animationModule(t) {
 		a.caption("You've now created your new shape. Now, duplicate it three times, rotate the duplicates, and place them together to create a tiling unit.").wait(1).hide('graphGrid', 1) // fade out 1s, then turn off
 		.show('TLTile').to('TLTile', ['fill', 'opacity'], [c.TLTile, 0.5], 1).to('TLTile', 'transform', 'rotate(-90deg)', 1).to('TLTile', 'opacity', 1, 0.75).show('BLTile').to('BLTile', ['fill', 'opacity'], [c.BLTile, 0.5], 1).to('BLTile', 'transform', 'rotate(-180deg)', 1.5).to('BLTile', 'opacity', 1, 0.75).show('BRTile').to('BRTile', ['fill', 'opacity'], [c.BRTile, 0.5], 1).to('BRTile', 'transform', 'rotate(-270deg)', 2).to('BRTile', 'opacity', 1, 0.75).wait(1.25).to('diamond', 'transform', g.shiftTo(-pt.rotX(), -pt.rotY()) + ' rotate(-45deg)', 1).wait(1.5);
 
-		a.caption("Now that you've created a tessellated unit, you can repeat it over and over again to cover an infinite tiled surface.").hide('diamond', 2).rewind(2).show('sq4init', 2).hide(['diamond', 'BRTile', 'BLTile', 'TLTile']) // arrays allowed
-		.wait(1).to('sq4init', 'transform', 'scale(1, 1)', 1).rewind(1).show('initPat', 1.5).wait(2);
+		a.caption("Now that you've created a tessellated unit, you can repeat it over and over again to cover an infinite tiled surface.").hide('diamond', 2).rewind(2).show('sq4init', 2).wait(1).to('sq4init', 'transform', 'scale(1, 1)', 1).rewind(1).show('initPat', 1.5).wait(2);
 
 		a.caption("You can create different tile units with a single irregular shape by applying different color schemes, flipping, or rotating the shapes.").wait(1).hide('initPat', 1.5).rewind(1).to('sq4init', 'transform', g.shiftTo(pt.sq4(0), 0), 1).show('sq2init', 1).wait(0.5).show('mirrorLine', 0.5).wait(0.5).show(['sq2flip', 'sq4flip'], 1).wait(0.5).hide('mirrorLine', 1);
 
