@@ -10,7 +10,7 @@ var tessellations = (function demo0patternsModule(t)
 	
 
 
-	const _buildDemo0Patterns = () => 
+	const _doBuildDemo0Patterns = () => 
 	{
 		const
 			ar = t.arrays(),
@@ -155,9 +155,9 @@ var tessellations = (function demo0patternsModule(t)
 		return t.demo(0);
 		
 
-	}; // end _buildDemo0Patterns
+	}; // end _doBuildDemo0Patterns
 	
-	t.demo(0).buildPatterns = () => t.loadOnce(_buildDemo0Patterns);
+	t.demo(0).buildPatterns = () => t.loadOnce(_doBuildDemo0Patterns);
 
 	
 	return t;

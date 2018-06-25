@@ -11,7 +11,7 @@ var tessellations = function demo0patternsModule(t) {
 		};
 	}();
 
-	var _buildDemo0Patterns = function _buildDemo0Patterns() {
+	var _doBuildDemo0Patterns = function _doBuildDemo0Patterns() {
 		var ar = t.arrays(),
 		    svg = t.idTypes().svg(),
 		    pt = t.demo(0).points();
@@ -103,10 +103,10 @@ var tessellations = function demo0patternsModule(t) {
 		_build.allPatterns();
 
 		return t.demo(0);
-	}; // end _buildDemo0Patterns
+	}; // end _doBuildDemo0Patterns
 
 	t.demo(0).buildPatterns = function () {
-		return t.loadOnce(_buildDemo0Patterns);
+		return t.loadOnce(_doBuildDemo0Patterns);
 	};
 
 	return t;

@@ -10,9 +10,9 @@ var tessellations = (function demo0shapesModule(t)
 	
 	
 	
-	// *** note this and the other buildX's are command- rather than data-functions, because they're just modifying DOM elements
+	// note this and the other _do...'s are command- rather than data-functions, because they're just modifying DOM elements
 	
-	const _buildShapes = () => {
+	const _doBuildShapes = () => {
 		
 		const
 			ar = t.arrays(),
@@ -134,9 +134,9 @@ var tessellations = (function demo0shapesModule(t)
 		
 		return t.demo(0);
 
-	}; // end _buildShapes
+	}; // end _doBuildShapes
 
-	t.demo(0).buildShapes = () => t.loadOnce(_buildShapes);
+	t.demo(0).buildShapes = () => t.loadOnce(_doBuildShapes);
 
 
 
@@ -157,8 +157,7 @@ var tessellations = (function demo0shapesModule(t)
 
 
 
-
-	const _buildStyles = () => {
+	const _doBuildStyles = () => {
 		
 		const
 			ar = t.arrays(),
@@ -315,9 +314,9 @@ var tessellations = (function demo0shapesModule(t)
 		
 		return t.demo(0);
 
-	}; // end _buildStyles
+	}; // end _doBuildStyles
 	
-	t.demo(0).buildStyles = () => t.loadOnce(_buildStyles);
+	t.demo(0).buildStyles = () => t.loadOnce(_doBuildStyles);
 	
 	
 	return t;

@@ -11,9 +11,9 @@ var tessellations = function demo0shapesModule(t) {
 		};
 	}();
 
-	// *** note this and the other buildX's are command- rather than data-functions, because they're just modifying DOM elements
+	// note this and the other _do...'s are command- rather than data-functions, because they're just modifying DOM elements
 
-	var _buildShapes = function _buildShapes() {
+	var _doBuildShapes = function _doBuildShapes() {
 
 		var ar = t.arrays(),
 		    svg = t.idTypes().svg(),
@@ -77,10 +77,10 @@ var tessellations = function demo0shapesModule(t) {
 		_build.allShapes();
 
 		return t.demo(0);
-	}; // end _buildShapes
+	}; // end _doBuildShapes
 
 	t.demo(0).buildShapes = function () {
-		return t.loadOnce(_buildShapes);
+		return t.loadOnce(_doBuildShapes);
 	};
 
 	/* this doesn't really need the full loading infrastructure
@@ -100,7 +100,7 @@ var tessellations = function demo0shapesModule(t) {
 		return t.loadOnce(_getColors);
 	};
 
-	var _buildStyles = function _buildStyles() {
+	var _doBuildStyles = function _doBuildStyles() {
 
 		var ar = t.arrays(),
 		    getId = t.idTypes().id(),
@@ -181,10 +181,10 @@ var tessellations = function demo0shapesModule(t) {
 		_init.allStyles();
 
 		return t.demo(0);
-	}; // end _buildStyles
+	}; // end _doBuildStyles
 
 	t.demo(0).buildStyles = function () {
-		return t.loadOnce(_buildStyles);
+		return t.loadOnce(_doBuildStyles);
 	};
 
 	return t;
