@@ -21,6 +21,8 @@ var tessellations = (function demo0pointsModule(t)
 		
 	const _getDemo0Points = () => 
 	{
+		const ds = t.ds();
+		
 
 		const _SquarePoints = rad => {
 		
@@ -63,13 +65,17 @@ var tessellations = (function demo0pointsModule(t)
 			const
 				s = _SquarePoints(32),
 				_bump = s.length/8;
+			
+			const sqExts = {
+				TLBump: [s.start + _bump, -_bump],
+				TRBump: [_bump, s.start + _bump],
+				BRBump: [s.end - _bump, _bump],
+				scaleUp: _shp.length/s.length * Math.sqrt(2),
+			};
+			
+			const sqFull = ds.copyProps([s, sqExts]);
 
-			s.TLBump = [s.start + _bump, -_bump];
-			s.TRBump = [_bump, s.start + _bump];
-			s.BRBump = [s.end - _bump, _bump];
-			s.scaleUp = _shp.length/s.length * Math.sqrt(2);
-
-			return s;
+			return sqFull;
 
 		})();
 

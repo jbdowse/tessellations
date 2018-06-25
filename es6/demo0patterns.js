@@ -13,7 +13,7 @@ var tessellations = (function demo0patternsModule(t)
 	const _doBuildDemo0Patterns = () => 
 	{
 		const
-			ar = t.arrays(),
+			ds = t.ds(),
 			svg = t.idTypes().svg(),
 			pt = t.demo(0).points();
 		
@@ -58,14 +58,14 @@ var tessellations = (function demo0patternsModule(t)
 					startShift = -shiftInterval;
 
 
-				ar.forCount(sqsPerSide, row =>
+				ds.forCount(sqsPerSide, row =>
 				{
 					const
 						shiftY = startShift + row * shiftInterval,
 						indexOffset = row * sqsPerSide;
 
 
-					ar.forCount(sqsPerSide, column =>
+					ds.forCount(sqsPerSide, column =>
 					{
 						const
 							squareIndex =  indexOffset + column,
@@ -95,7 +95,7 @@ var tessellations = (function demo0patternsModule(t)
 					startShift = -shiftInterval;
 
 
-				ar.forCount(patsPerSet, patIndex =>
+				ds.forCount(patsPerSet, patIndex =>
 				{
 					const
 						patId = 'set' + setIndex + 'pat' + patIndex,
@@ -129,7 +129,7 @@ var tessellations = (function demo0patternsModule(t)
 			{
 				const setCount = 4;
 			
-				ar.forCount(setCount, setIndex => {
+				ds.forCount(setCount, setIndex => {
 					_build.patternSet(setIndex);
 				});
 				

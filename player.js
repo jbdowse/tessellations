@@ -6,77 +6,65 @@ var tessellations = function playerModule(t) {
 
 	var _getPlayer = function _getPlayer() {
 
-		var ar = t.arrays(),
+		var ds = t.ds(),
 		    id = t.idTypes().id(),
 		    svg = t.idTypes().svg();
 
 		var _st = { // "state"
-
 			currentAnimation: null,
 			playQueue: [],
-			playing: false,
-			paused: false,
-
-			// keeping function() in case use (this) instead of _st
-			end: function end() {
-				_st.playing = false;
-				_st.playQueue = [];
-
-				svg('to-start').off();
-				svg('play').on();
-			}
+			isPlaying: false,
+			isPaused: false
 		};
 
-		var player = {
+		var playerInit = ds.accessors(_st);
 
-			// using => wherever (this) not used
+		var playerExtensions = {
 
-			currentAnimation: function currentAnimation() {
-				return _st.currentAnimation;
-			},
-
-			playQueue: function playQueue() {
-				return _st.playQueue;
-			},
+			// using => wherever (this) not used --> which should be everywhere...
 
 			setCurrentAnimation: function setCurrentAnimation(animation) {
 				_st.currentAnimation = animation;
 			},
 
-			playing: function playing() {
-				return _st.playing && !_st.paused;
+			isPlaying: function isPlaying() {
+				return _st.isPlaying && !_st.isPaused;
 			},
 
-			paused: function paused() {
-				return _st.playing && _st.paused;
+			isPaused: function isPaused() {
+				return _st.isPlaying && _st.isPaused;
 			},
 
-			stopped: function stopped() {
-				return !_st.playing;
+			isStopped: function isStopped() {
+				return !_st.isPlaying;
 			},
 
 			start: function start() /*demoIndex*/{
-				_st.playing = true;
+				_st.isPlaying = true;
 			},
 
-			end: _st.end, // used for stop() & at end of demos
-
 			pause: function pause() {
-				_st.paused = true;
+				_st.isPaused = true;
 			}, //...
 
 			resume: function resume() {
-				_st.paused = false;
+				_st.isPaused = false;
 			}, //...
 
+			end: function end() {
+				_st.isPlaying = false;
+				_st.playQueue = [];
 
+				svg('to-start').off();
+				svg('play').on();
+			},
+
+			// pretty surprised that these references to const player work even before it's introduced, but they do! hmm
 			play: function play() /*demoIndex*/{
-				var _this = this;
+				if (!player.isPlaying()) {
 
-				if (!this.playing()) {
-
-					this.start();
-					this.setCurrentAnimation(t.demo(0 /*demoIndex)*/).animation());
+					player.start();
+					player.setCurrentAnimation(t.demo(0 /*demoIndex)*/).animation());
 
 					svg('to-start').on();
 					svg('play').off();
@@ -84,44 +72,40 @@ var tessellations = function playerModule(t) {
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
 
-					ar.forEachOf(this.currentAnimation().actions(), function (action) {
-						_this.playQueue().push(action());
+					ds.forEachOf(player.currentAnimation().actions(), function (action) {
+						player.playQueue().push(action());
 					});
 				}
 			},
 
 			stop: function stop() {
-				// for some reason "this" doesn't work here though it does at play()
-
-				ar.forEachOf(_st.playQueue, function (timeout) {
+				ds.forEachOf(player.playQueue(), function (timeout) {
 					window.clearTimeout(timeout);
 				});
 
-				ar.forEachOf(_st.currentAnimation.animatedElements(), function (shape) {
+				ds.forEachOf(player.currentAnimation().animatedElements(), function (shape) {
 					svg(shape).reset();
 				});
 
 				id('caption').html('');
 				id('demo0-title').html('');
 
-				_st.end();
+				player.end();
 			},
 
 			addListeners: function addListeners() {
-				var _this2 = this;
-
 				id('play').listen('click', function () {
-					_this2.play();
+					player.play();
 				} /*0*/);
 
-				id('to-start').listen('click', this.stop);
+				id('to-start').listen('click', player.stop);
 
 				window.addEventListener('keydown', function (k) {
 					if (k.key === " ") {
-						if (_this2.playing()) {
-							_this2.stop();
+						if (player.isPlaying()) {
+							player.stop();
 						} else {
-							_this2.play();
+							player.play();
 						}
 					}
 				});
@@ -129,8 +113,10 @@ var tessellations = function playerModule(t) {
 				// eventually need to add listeners for pause/resume, demo 1, home screen, ...
 			}
 
-		}; // end player
+		}; // end playerExtensions
 
+
+		var player = ds.copyProps([playerInit, playerExtensions]);
 
 		return player;
 	}; // end _getPlayer

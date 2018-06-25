@@ -15,7 +15,7 @@ var tessellations = (function demo0shapesModule(t)
 	const _doBuildShapes = () => {
 		
 		const
-			ar = t.arrays(),
+			ds = t.ds(),
 			svg = t.idTypes().svg(),
 			pt = t.demo(0).points(),
 			g = t.geom();
@@ -33,7 +33,7 @@ var tessellations = (function demo0shapesModule(t)
 					gridCell = pt.gridCell(),
 					lineCount = pt.gridSubdivs() + 1;
 
-				ar.forCount(lineCount, i => {
+				ds.forCount(lineCount, i => {
 
 					svg('graphGrid')
 						.defineAnon('use', [
@@ -145,13 +145,19 @@ var tessellations = (function demo0shapesModule(t)
 	but keeping it in case it gains the need for lazy loading: */
 	
 	const _getDemo0Colors = () =>
-	({
-		base: '#36c',
-		rotator: '#c3c',
-		TLTile: '#3c6',
-		BLTile: '#fc0',
-		BRTile: '#f36',
-	});
+	{
+		const colors = {
+			base: '#36c',
+			rotator: '#c3c',
+			TLTile: '#3c6',
+			BLTile: '#fc0',
+			BRTile: '#f36',
+		};
+		
+		const accessors = t.ds().accessors(colors);
+		
+		return accessors;
+	};
 	
 	t.demo(0).colors = () => t.loadOnce(_getDemo0Colors);
 
@@ -160,7 +166,7 @@ var tessellations = (function demo0shapesModule(t)
 	const _doBuildStyles = () => {
 		
 		const
-			ar = t.arrays(),
+			ds = t.ds(),
 			getId = t.idTypes().id(), // distinguish from many id params below
 			svg = t.idTypes().svg(),
 			geom = t.geom(),
@@ -206,7 +212,7 @@ var tessellations = (function demo0shapesModule(t)
 					'zoom'
 				];
 
-				ar.forEachOf(allAnimatedShapes, id =>
+				ds.forEachOf(allAnimatedShapes, id =>
 				{
 					svg(id)
 						.initStyle('display', 'none')
@@ -230,9 +236,9 @@ var tessellations = (function demo0shapesModule(t)
 					'zoom'
 				];
 
-				ar.forEachOf(baseColorShapes, id =>
+				ds.forEachOf(baseColorShapes, id =>
 				{
-					svg(id).initStyle('fill', c.base);
+					svg(id).initStyle('fill', c.base());
 				});
 
 				return _init;
@@ -249,7 +255,7 @@ var tessellations = (function demo0shapesModule(t)
 					'BRTile'
 				];
 
-				ar.forEachOf(BLRotators, id =>
+				ds.forEachOf(BLRotators, id =>
 				{
 					const origin = geom.pxPt( pt.shpBL() );
 					svg(id).initStyle('transformOrigin', origin);
@@ -267,7 +273,7 @@ var tessellations = (function demo0shapesModule(t)
 					'sq4flip'
 				];
 
-				ar.forCount(laterSquares.length, i =>
+				ds.forCount(laterSquares.length, i =>
 				{
 					const xpos = pt.sq4(i + 1);
 					svg(laterSquares[i]).initStyle( 'transform', geom.shiftTo(xpos, 0) );

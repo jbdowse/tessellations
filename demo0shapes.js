@@ -15,7 +15,7 @@ var tessellations = function demo0shapesModule(t) {
 
 	var _doBuildShapes = function _doBuildShapes() {
 
-		var ar = t.arrays(),
+		var ds = t.ds(),
 		    svg = t.idTypes().svg(),
 		    pt = t.demo(0).points(),
 		    g = t.geom();
@@ -29,7 +29,7 @@ var tessellations = function demo0shapesModule(t) {
 				var gridCell = pt.gridCell(),
 				    lineCount = pt.gridSubdivs() + 1;
 
-				ar.forCount(lineCount, function (i) {
+				ds.forCount(lineCount, function (i) {
 
 					svg('graphGrid').defineAnon('use', ['href', '#gridlineHoriz', 'x', 0, 'y', i * gridCell]).defineAnon('use', ['href', '#gridlineVert', 'x', i * gridCell, 'y', 0]);
 				});
@@ -87,13 +87,17 @@ var tessellations = function demo0shapesModule(t) {
  but keeping it in case it gains the need for lazy loading: */
 
 	var _getDemo0Colors = function _getDemo0Colors() {
-		return {
+		var colors = {
 			base: '#36c',
 			rotator: '#c3c',
 			TLTile: '#3c6',
 			BLTile: '#fc0',
 			BRTile: '#f36'
 		};
+
+		var accessors = t.ds().accessors(colors);
+
+		return accessors;
 	};
 
 	t.demo(0).colors = function () {
@@ -102,7 +106,7 @@ var tessellations = function demo0shapesModule(t) {
 
 	var _doBuildStyles = function _doBuildStyles() {
 
-		var ar = t.arrays(),
+		var ds = t.ds(),
 		    getId = t.idTypes().id(),
 		    // distinguish from many id params below
 		svg = t.idTypes().svg(),
@@ -122,7 +126,7 @@ var tessellations = function demo0shapesModule(t) {
 			hideAll: function hideAll() {
 				var allAnimatedShapes = ['graphGrid', 'base', 'carved', 'rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile', 'initPat', 'sq4init', 'sq4flip', 'sq2init', 'sq2flip', 'mirrorLine', 'pats0', 'pats1', 'pats2', 'pats3', 'zoom'];
 
-				ar.forEachOf(allAnimatedShapes, function (id) {
+				ds.forEachOf(allAnimatedShapes, function (id) {
 					svg(id).initStyle('display', 'none').initStyle('opacity', 0);
 				});
 
@@ -132,8 +136,8 @@ var tessellations = function demo0shapesModule(t) {
 			setBaseColor: function setBaseColor() {
 				var baseColorShapes = ['base', 'carved', 'rotator', 'initTile', 'TLTile', 'BLTile', 'BRTile', 'zoom'];
 
-				ar.forEachOf(baseColorShapes, function (id) {
-					svg(id).initStyle('fill', c.base);
+				ds.forEachOf(baseColorShapes, function (id) {
+					svg(id).initStyle('fill', c.base());
 				});
 
 				return _init;
@@ -142,7 +146,7 @@ var tessellations = function demo0shapesModule(t) {
 			setRotationPoint: function setRotationPoint() {
 				var BLRotators = ['rotator', 'diamond', 'TLTile', 'BLTile', 'BRTile'];
 
-				ar.forEachOf(BLRotators, function (id) {
+				ds.forEachOf(BLRotators, function (id) {
 					var origin = geom.pxPt(pt.shpBL());
 					svg(id).initStyle('transformOrigin', origin);
 				});
@@ -153,7 +157,7 @@ var tessellations = function demo0shapesModule(t) {
 			setSquarePositions: function setSquarePositions() {
 				var laterSquares = ['sq2init', 'sq2flip', 'sq4flip'];
 
-				ar.forCount(laterSquares.length, function (i) {
+				ds.forCount(laterSquares.length, function (i) {
 					var xpos = pt.sq4(i + 1);
 					svg(laterSquares[i]).initStyle('transform', geom.shiftTo(xpos, 0));
 				});

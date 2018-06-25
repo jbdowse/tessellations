@@ -16,6 +16,7 @@ var tessellations = function demo0pointsModule(t) {
 	};
 
 	var _getDemo0Points = function _getDemo0Points() {
+		var ds = t.ds();
 
 		var _SquarePoints = function _SquarePoints(rad) {
 
@@ -53,12 +54,16 @@ var tessellations = function demo0pointsModule(t) {
 			var s = _SquarePoints(32),
 			    _bump = s.length / 8;
 
-			s.TLBump = [s.start + _bump, -_bump];
-			s.TRBump = [_bump, s.start + _bump];
-			s.BRBump = [s.end - _bump, _bump];
-			s.scaleUp = _shp.length / s.length * Math.sqrt(2);
+			var sqExts = {
+				TLBump: [s.start + _bump, -_bump],
+				TRBump: [_bump, s.start + _bump],
+				BRBump: [s.end - _bump, _bump],
+				scaleUp: _shp.length / s.length * Math.sqrt(2)
+			};
 
-			return s;
+			var sqFull = ds.copyProps([s, sqExts]);
+
+			return sqFull;
 		}();
 
 		// other values for patterns:

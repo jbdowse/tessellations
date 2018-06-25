@@ -6,60 +6,56 @@ var tessellations = (function playerModule(t)
 	const _getPlayer = () => {
 		
 		const
-			ar = t.arrays(),
+			ds = t.ds(),
 			id = t.idTypes().id(),
 			svg = t.idTypes().svg();
 	
 
 		const _st = { // "state"
-
 			currentAnimation: null,
 			playQueue: [],
-			playing: false,
-			paused: false,
+			isPlaying: false,
+			isPaused: false,
+		};
 		
-			// keeping function() in case use (this) instead of _st
-			end: function() {
-				_st.playing = false;		
+		
+		const playerInit = ds.accessors(_st);
+
+
+		const playerExtensions = {
+		
+			// using => wherever (this) not used --> which should be everywhere...
+		
+			setCurrentAnimation: animation => { _st.currentAnimation = animation; },
+		
+			isPlaying: () => _st.isPlaying && ! _st.isPaused,
+		
+			isPaused: () => _st.isPlaying && _st.isPaused,
+		
+			isStopped: () => ! _st.isPlaying,
+
+			start: (/*demoIndex*/) => { _st.isPlaying = true; },
+			
+			pause: () => { _st.isPaused = true; }, //...
+		
+			resume: () => { _st.isPaused = false; }, //...
+		
+			end: () => 
+			{
+				_st.isPlaying = false;		
 				_st.playQueue = [];
 	
 				svg('to-start').off();
 				svg('play').on();
 			},
-		};
-
-
-		const player = {
 		
-			// using => wherever (this) not used
-		
-			currentAnimation: () => _st.currentAnimation,
-		
-			playQueue: () => _st.playQueue,
-		
-			setCurrentAnimation: animation => { _st.currentAnimation = animation; },
-		
-			playing: () => _st.playing && ! _st.paused,
-		
-			paused: () => _st.playing && _st.paused,
-		
-			stopped: () => ! _st.playing,
-
-			start: (/*demoIndex*/) => { _st.playing = true; },
-		
-			end: _st.end, // used for stop() & at end of demos
-		
-			pause: () => { _st.paused = true; }, //...
-		
-			resume: () => { _st.paused = false; }, //...
-		
-		
+			// pretty surprised that these references to const player work even before it's introduced, but they do! hmm
 			play: function(/*demoIndex*/)
 			{
-				if (! this.playing() ) {
+				if (! player.isPlaying() ) {
 		
-					this.start(/*demoIndex*/);
-					this.setCurrentAnimation( t.demo(0 /*demoIndex)*/).animation() );
+					player.start(/*demoIndex*/);
+					player.setCurrentAnimation( t.demo(0 /*demoIndex)*/).animation() );
 			
 					svg('to-start').on();
 					svg('play').off();
@@ -67,9 +63,9 @@ var tessellations = (function playerModule(t)
 					// call setTimeout() for each of the scenes,
 					// & store the timeouts in playQueue:
 				
-					ar.forEachOf(this.currentAnimation().actions(), action =>
+					ds.forEachOf(player.currentAnimation().actions(), action =>
 					{
-						this.playQueue().push( action() );
+						player.playQueue().push( action() );
 					});
 				}
 			},
@@ -77,14 +73,12 @@ var tessellations = (function playerModule(t)
 
 			stop: function()
 			{
-				// for some reason "this" doesn't work here though it does at play()
-				
-				ar.forEachOf(_st.playQueue, timeout =>
+				ds.forEachOf(player.playQueue(), timeout =>
 				{
 					window.clearTimeout(timeout);
 				});
 	
-				ar.forEachOf(_st.currentAnimation.animatedElements(), shape =>
+				ds.forEachOf(player.currentAnimation().animatedElements(), shape =>
 				{
 					svg(shape).reset();
 				});
@@ -92,35 +86,37 @@ var tessellations = (function playerModule(t)
 				id('caption').html('');
 				id('demo0-title').html('');
 	
-				_st.end();
+				player.end();
 			},
 		
 		
 			addListeners: function()
 			{
 				id('play').listen('click', () => {
-					this.play(/*0*/);
+					player.play(/*0*/);
 				});
 			
-				id('to-start').listen('click', this.stop);
+				id('to-start').listen('click', player.stop);
 	
 				window.addEventListener('keydown', k =>
 				{
 					if (k.key === " ") {
-						if (this.playing()) {
-							this.stop();
+						if (player.isPlaying()) {
+							player.stop();
 						}
 						else {
-							this.play();
+							player.play();
 						}
 					}
 				});
 
 				// eventually need to add listeners for pause/resume, demo 1, home screen, ...
-
 			},
 		
-		}; // end player
+		}; // end playerExtensions
+		
+		
+		const player = ds.copyProps([playerInit, playerExtensions]);
 		
 		
 		return player;

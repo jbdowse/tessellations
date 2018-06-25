@@ -8,7 +8,7 @@ var tessellations = function animationModule(t) {
 
 		var svg = t.idTypes().svg(),
 		    getId = t.idTypes().id(),
-		    ar = t.arrays(),
+		    ds = t.ds(),
 		    cap = getId('caption'),
 		    titleCap = getId('demo0-title');
 
@@ -39,7 +39,7 @@ var tessellations = function animationModule(t) {
 				},
 
 				addAnyInitialStylesIfChanging: function addAnyInitialStylesIfChanging(idStr, props) {
-					ar.forEachOf(props, function (prop) {
+					ds.forEachOf(props, function (prop) {
 						var shape = svg(idStr);
 						shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
 					});
@@ -93,7 +93,7 @@ var tessellations = function animationModule(t) {
 			},
 
 			addElementIfNew: function addElementIfNew(idStr) {
-				ar.addIfNew(this.animatedElements(), idStr);
+				ds.addIfNew(this.animatedElements(), idStr);
 				svg(idStr).style('transitionTimingFunction', 'linear');
 
 				return this;
@@ -102,9 +102,9 @@ var tessellations = function animationModule(t) {
 			to: function to(idStrs, properties, newValues, transTimes) {
 				var _this = this;
 
-				var ids = ar.lift(idStrs);
+				var ids = ds.lift(idStrs);
 
-				ar.forEachOf(ids, function (id) {
+				ds.forEachOf(ids, function (id) {
 					_this.addElementIfNew(id);
 
 					_this.transition({
@@ -116,7 +116,7 @@ var tessellations = function animationModule(t) {
 					});
 				});
 
-				var maxTime = ar.arrayMax(transTimes);
+				var maxTime = ds.arrayMax(transTimes);
 				this.wait(maxTime);
 
 				return this;
@@ -126,19 +126,19 @@ var tessellations = function animationModule(t) {
 				var _this2 = this;
 
 				var transTime = optTransTime || 0,
-				    idSet = ar.lift(idStrs);
+				    idSet = ds.lift(idStrs);
 
-				ar.forEachOf(idSet, function (id) {
+				ds.forEachOf(idSet, function (id) {
 					_this2.addElementIfNew(id);
 				});
 
 				this.enqueue(function () {
-					ar.forEachOf(idSet, function (id) {
+					ds.forEachOf(idSet, function (id) {
 						svg(id).on();
 					});
 				}, this.elapsedTime());
 
-				ar.forEachOf(idSet, function (id) {
+				ds.forEachOf(idSet, function (id) {
 					_this2.transition({
 						start: _this2.elapsedTime(),
 						id: id,
@@ -157,9 +157,9 @@ var tessellations = function animationModule(t) {
 				var _this3 = this;
 
 				var transTime = optTransTime || 0,
-				    idSet = ar.lift(idStrs);
+				    idSet = ds.lift(idStrs);
 
-				ar.forEachOf(idSet, function (id) {
+				ds.forEachOf(idSet, function (id) {
 					_this3.addElementIfNew(id);
 
 					_this3.transition({
@@ -174,7 +174,7 @@ var tessellations = function animationModule(t) {
 				this.wait(transTime);
 
 				this.enqueue(function () {
-					ar.forEachOf(idSet, function (id) {
+					ds.forEachOf(idSet, function (id) {
 						svg(id).off();
 					});
 				}, this.elapsedTime());
@@ -229,7 +229,7 @@ var tessellations = function animationModule(t) {
 				// this in inner arrow fn should refer to this object:
 
 				this.enqueue(function () {
-					ar.forEachOf(_this4.animatedElements(), function (element) {
+					ds.forEachOf(_this4.animatedElements(), function (element) {
 						svg(element).reset();
 					});
 
@@ -241,12 +241,12 @@ var tessellations = function animationModule(t) {
 
 			// param trans = object incl. {start, id, props, vals, transTimes}
 			transition: function transition(trans) {
-				var propSet = ar.lift(trans.props),
-				    valSet = ar.lift(trans.vals),
-				    transTimeSet = ar.lift(trans.transTimes),
+				var propSet = ds.lift(trans.props),
+				    valSet = ds.lift(trans.vals),
+				    transTimeSet = ds.lift(trans.transTimes),
 				    reducedTimeSet = _ut.reduceTimes(transTimeSet),
-				    reducedTimesList = ar.csv(reducedTimeSet),
-				    propsList = ar.csv(propSet);
+				    reducedTimesList = ds.csv(reducedTimeSet),
+				    propsList = ds.csv(propSet);
 
 				_ut.addAnyInitialStylesIfChanging(trans.id, propSet);
 
@@ -256,7 +256,7 @@ var tessellations = function animationModule(t) {
 				}, trans.start);
 
 				this.enqueue(function () {
-					ar.forCount(propSet.length, function (i) {
+					ds.forCount(propSet.length, function (i) {
 						svg(trans.id).style(propSet[i], valSet[i]);
 					});
 				}, trans.start + _ut.transDelay_ms);

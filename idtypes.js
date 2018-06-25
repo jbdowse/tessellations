@@ -11,7 +11,7 @@ var tessellations = function idTypesModule(t) {
   methods as per the prototypes below
   */
 
-		var ar = t.arrays();
+		var ds = t.ds();
 
 		var _setAttrs = function _setAttrs(element, attrList) {
 			for (var i = 0; i < attrList.length; i += 2) {
@@ -89,26 +89,13 @@ var tessellations = function idTypesModule(t) {
 
 		var _svg = {
 
-			proto: function svgProto() {
+			proto: function () {
 
-				var svgNS = 'http://www.w3.org/2000/svg',
-				    idp = _id.proto;
+				var svgNS = 'http://www.w3.org/2000/svg';
 
-				var _svgProto = {
+				var svgProtoInit = ds.copyProps(_id.proto, ['id', 'element', 'style', 'tag', 'untag', 'listen', 'attr']);
 
-					id: idp.id,
-
-					element: idp.element,
-
-					style: idp.style,
-
-					tag: idp.tag,
-
-					untag: idp.untag,
-
-					listen: idp.listen,
-
-					attr: idp.attr,
+				var svgProtoExtensions = {
 
 					on: function on() {
 						this.style('display', 'block');
@@ -126,11 +113,11 @@ var tessellations = function idTypesModule(t) {
 
 					// need to make _initialStyles = [] an instance var:
 					addInitialStyleIfNew: function addInitialStyleIfNew(prop, val) {
-						var propIndex = ar.indexOfKey(this.initialStyles(), 'property', prop);
+						var propIndex = ds.indexOfKey(this.initialStyles(), 'property', prop);
 
 						var propIsNew = -1 === propIndex;
 
-						ar.addIfPredicate(this._initialStyles, { property: prop, value: val }, propIsNew);
+						ds.addIfPredicate(this._initialStyles, { property: prop, value: val }, propIsNew);
 
 						return this;
 					},
@@ -144,7 +131,7 @@ var tessellations = function idTypesModule(t) {
 					reset: function reset() {
 						var _this = this;
 
-						ar.forEachOf(this.initialStyles(), function (initialStyle) {
+						ds.forEachOf(this.initialStyles(), function (initialStyle) {
 							_this.style(initialStyle.property, initialStyle.value);
 						});
 
@@ -183,7 +170,9 @@ var tessellations = function idTypesModule(t) {
 
 				};
 
-				return _svgProto;
+				var svgProto = ds.copyProps([svgProtoInit, svgProtoExtensions]);
+
+				return svgProto;
 			}(), // end _svg.proto
 
 
@@ -200,14 +189,7 @@ var tessellations = function idTypesModule(t) {
 			svg: t.buildType().cachingIdType(_svg)
 		};
 
-		return {
-			id: function id() {
-				return built.id;
-			},
-			svg: function svg() {
-				return built.svg;
-			}
-		};
+		return ds.accessorsEvenForFns(built);
 	}; // end _getIdTypes
 
 	t.idTypes = function () {
@@ -216,7 +198,7 @@ var tessellations = function idTypesModule(t) {
 
 	var _getGeom = function _getGeom() {
 
-		var ar = t.arrays(),
+		var ds = t.ds(),
 		    svg = t.idTypes().svg();
 
 		var geom = {
@@ -234,7 +216,7 @@ var tessellations = function idTypesModule(t) {
 			ptStr: function ptStr(ptList) {
 				var str = '';
 
-				ar.forCount(ptList.length, function (i) {
+				ds.forCount(ptList.length, function (i) {
 					var currentPt = ptList[i];
 					str += currentPt[0] + ',' + currentPt[1] + ' ';
 				});

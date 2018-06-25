@@ -17,8 +17,10 @@ var tessellations = function genericsModule(t) {
 		return build.value;
 	};
 
-	var _getArrays = function _getArrays() {
-		return {
+	var _getDs = function _getDs() {
+		// ds = 'data structures'
+
+		var ds = {
 
 			lift: function lift(x) {
 				return Array.isArray(x) ? x : [x];
@@ -28,12 +30,14 @@ var tessellations = function genericsModule(t) {
 				for (var i = 0; i < arr.length; ++i) {
 					func(arr[i]);
 				}
+				return ds;
 			},
 
 			forCount: function forCount(count, func) {
 				for (var i = 0; i < count; ++i) {
 					func(i);
 				}
+				return ds;
 			},
 
 			arrayMax: function arrayMax(arr) {
@@ -50,12 +54,14 @@ var tessellations = function genericsModule(t) {
 				if (arr.indexOf(element) === -1) {
 					arr.push(element);
 				}
+				return ds;
 			},
 
 			addIfPredicate: function addIfPredicate(arr, element, predicate) {
 				if (predicate) {
 					arr.push(element);
 				}
+				return ds;
 			},
 
 			indexOfKey: function indexOfKey(arr, key, value) {
@@ -74,34 +80,90 @@ var tessellations = function genericsModule(t) {
 					}
 				}
 				return null;
+			},
+
+			accessors: function accessors(valueObject) {
+				var accessors = {};
+
+				var _loop = function _loop(propName) {
+					accessors[propName] = typeof valueObject[propName] === 'function' ? valueObject[propName] : function () {
+						return valueObject[propName];
+					};
+				};
+
+				for (var propName in valueObject) {
+					_loop(propName);
+				}
+
+				return accessors;
+			},
+
+			accessorsEvenForFns: function accessorsEvenForFns(valueObject) {
+				var accessors = {};
+
+				var _loop2 = function _loop2(propName) {
+					accessors[propName] = function () {
+						return valueObject[propName];
+					};
+				};
+
+				for (var propName in valueObject) {
+					_loop2(propName);
+				}
+
+				return accessors;
+			},
+
+			// copyProps works for single source object or arrays of them;
+			// later source properties override earlier ones of same name:
+
+			copyProps: function copyProps(protos, propNameListToCopy) {
+				var protoList = ds.lift(protos);
+
+				var newObj = {};
+
+				if (propNameListToCopy) {
+					// copy just the listed properties
+
+					ds.forEachOf(protoList, function (proto) {
+						ds.forEachOf(propNameListToCopy, function (propName) {
+							if (proto[propName]) {
+								newObj[propName] = proto[propName];
+							}
+						});
+					});
+				} else {
+					// copy all properties
+
+					ds.forEachOf(protoList, function (proto) {
+						for (var propName in proto) {
+							newObj[propName] = proto[propName];
+						}
+					});
+				}
+
+				return newObj;
 			}
 
-		};
-	}; // end _getArrays
+		}; // end ds
 
-	t.arrays = function () {
-		return t.loadOnce(_getArrays);
+
+		return ds;
+	}; // end _getDs
+
+	t.ds = function () {
+		return t.loadOnce(_getDs);
 	};
 
 	var _getBuildType = function _getBuildType() {
 
-		var ar = t.arrays();
-
-		var _copyPrototypeFields = function _copyPrototypeFields(proto) {
-			var newObj = {};
-
-			for (var key in proto) {
-				newObj[key] = proto[key];
-			}
-
-			return newObj;
-		};
+		var ds = t.ds();
 
 		var _typeBuilders = {
 
 			basic: function basic(type) {
 				return function () {
-					var newObj = _copyPrototypeFields(type.proto);
+					var newObj = ds.copyProps(type.proto);
 					type.addInstanceVars(newObj);
 					return newObj;
 				};
@@ -113,14 +175,14 @@ var tessellations = function genericsModule(t) {
 					var cache = []; // private, shared by entire type ("static")
 
 					var createObject = function createObject(idStr) {
-						var newObj = _copyPrototypeFields(type.proto);
+						var newObj = ds.copyProps(type.proto);
 						type.addInstanceVars(newObj, idStr);
 						cache.push(newObj);
 						return newObj;
 					};
 
 					var getOrCreate = function getOrCreate(idStr) {
-						var cachedObj = ar.findByKey(cache, '_id', idStr);
+						var cachedObj = ds.findByKey(cache, '_id', idStr);
 						return cachedObj || createObject(idStr);
 					};
 

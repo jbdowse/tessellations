@@ -9,7 +9,7 @@ var tessellations = (function animationModule(t)
 		const
 			svg = t.idTypes().svg(),
 			getId = t.idTypes().id(),
-			ar = t.arrays(),
+			ds = t.ds(),
 			cap = getId('caption'),
 			titleCap = getId('demo0-title');
 
@@ -43,7 +43,7 @@ var tessellations = (function animationModule(t)
 
 				addAnyInitialStylesIfChanging: (idStr, props) =>
 				{
-					ar.forEachOf(props, prop =>
+					ds.forEachOf(props, prop =>
 					{
 						const shape = svg(idStr);
 						shape.addInitialStyleIfNew(prop, shape.element().style[prop]);
@@ -102,7 +102,7 @@ var tessellations = (function animationModule(t)
 
 			addElementIfNew: function(idStr)
 			{
-				ar.addIfNew(this.animatedElements(), idStr);
+				ds.addIfNew(this.animatedElements(), idStr);
 				svg(idStr).style('transitionTimingFunction', 'linear');
 				
 				return this;
@@ -111,9 +111,9 @@ var tessellations = (function animationModule(t)
 
 			to: function(idStrs, properties, newValues, transTimes)
 			{
-				const ids = ar.lift(idStrs);
+				const ids = ds.lift(idStrs);
 	
-				ar.forEachOf(ids, id =>
+				ds.forEachOf(ids, id =>
 				{
 					this.addElementIfNew(id);
 				
@@ -126,7 +126,7 @@ var tessellations = (function animationModule(t)
 					});
 				});
 
-				const maxTime = ar.arrayMax(transTimes);
+				const maxTime = ds.arrayMax(transTimes);
 				this.wait(maxTime);
 
 				return this;
@@ -137,22 +137,22 @@ var tessellations = (function animationModule(t)
 			{
 				const
 					transTime = optTransTime || 0,
-					idSet = ar.lift(idStrs);
+					idSet = ds.lift(idStrs);
 			
-				ar.forEachOf(idSet, id => {
+				ds.forEachOf(idSet, id => {
 					this.addElementIfNew(id);
 				});
 	
 				this.enqueue(
 					() => {
-						ar.forEachOf(idSet, id => {
+						ds.forEachOf(idSet, id => {
 							svg(id).on();
 						});
 					},
 					this.elapsedTime()
 				);
 
-				ar.forEachOf(idSet, id =>
+				ds.forEachOf(idSet, id =>
 				{
 					this.transition({
 						start: this.elapsedTime(),
@@ -173,9 +173,9 @@ var tessellations = (function animationModule(t)
 	
 				const
 					transTime = optTransTime || 0,
-					idSet = ar.lift(idStrs);
+					idSet = ds.lift(idStrs);
 	
-				ar.forEachOf(idSet, id =>
+				ds.forEachOf(idSet, id =>
 				{
 					this.addElementIfNew(id);
 				
@@ -192,7 +192,7 @@ var tessellations = (function animationModule(t)
 
 				this.enqueue(
 					() => {
-						ar.forEachOf(idSet, id => {
+						ds.forEachOf(idSet, id => {
 							svg(id).off();
 						});
 					},
@@ -266,7 +266,7 @@ var tessellations = (function animationModule(t)
 			
 				this.enqueue(
 					() => {
-						ar.forEachOf(this.animatedElements(), element =>
+						ds.forEachOf(this.animatedElements(), element =>
 						{
 							svg(element).reset();
 						});
@@ -284,12 +284,12 @@ var tessellations = (function animationModule(t)
 			transition: function(trans)
 			{
 				const
-					propSet = ar.lift(trans.props),
-					valSet = ar.lift(trans.vals),
-					transTimeSet = ar.lift(trans.transTimes),
+					propSet = ds.lift(trans.props),
+					valSet = ds.lift(trans.vals),
+					transTimeSet = ds.lift(trans.transTimes),
 					reducedTimeSet = _ut.reduceTimes(transTimeSet),
-					reducedTimesList = ar.csv(reducedTimeSet),
-					propsList =  ar.csv(propSet);
+					reducedTimesList = ds.csv(reducedTimeSet),
+					propsList =  ds.csv(propSet);
 	
 				_ut.addAnyInitialStylesIfChanging(trans.id, propSet);
 	
@@ -303,7 +303,7 @@ var tessellations = (function animationModule(t)
 	
 				this.enqueue(
 					() => {
-						ar.forCount(propSet.length, i => {
+						ds.forCount(propSet.length, i => {
 							svg(trans.id).style(propSet[i], valSet[i]);
 						});
 					},

@@ -12,7 +12,7 @@ var tessellations = function demo0patternsModule(t) {
 	}();
 
 	var _doBuildDemo0Patterns = function _doBuildDemo0Patterns() {
-		var ar = t.arrays(),
+		var ds = t.ds(),
 		    svg = t.idTypes().svg(),
 		    pt = t.demo(0).points();
 
@@ -36,11 +36,11 @@ var tessellations = function demo0patternsModule(t) {
 				    shiftInterval = pt.sqLength(),
 				    startShift = -shiftInterval;
 
-				ar.forCount(sqsPerSide, function (row) {
+				ds.forCount(sqsPerSide, function (row) {
 					var shiftY = startShift + row * shiftInterval,
 					    indexOffset = row * sqsPerSide;
 
-					ar.forCount(sqsPerSide, function (column) {
+					ds.forCount(sqsPerSide, function (column) {
 						var squareIndex = indexOffset + column,
 						    indexInGen = squareIndex % generatorLength,
 						    squareDefId = generator[indexInGen],
@@ -59,7 +59,7 @@ var tessellations = function demo0patternsModule(t) {
 				    shiftInterval = pt.patShift(),
 				    startShift = -shiftInterval;
 
-				ar.forCount(patsPerSet, function (patIndex) {
+				ds.forCount(patsPerSet, function (patIndex) {
 					var patId = 'set' + setIndex + 'pat' + patIndex,
 					    generatorIndex = baseGeneratorIndex + patIndex,
 					    shift = startShift + patIndex * shiftInterval;
@@ -84,7 +84,7 @@ var tessellations = function demo0patternsModule(t) {
 			patternSets: function patternSets() {
 				var setCount = 4;
 
-				ar.forCount(setCount, function (setIndex) {
+				ds.forCount(setCount, function (setIndex) {
 					_build.patternSet(setIndex);
 				});
 

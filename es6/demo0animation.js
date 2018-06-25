@@ -20,7 +20,7 @@ var tessellations = (function demo0animationModule(t)
 
 		const a = t.animation().init();
 
-		/* 	 */
+		/* 	*/
 		a.caption("Start by drawing a conventional, regular polygon...")
 		.show('graphGrid', 0.75) // turn on element & fade it in; add 1 sec to elapsedTime
 		.wait(1)
@@ -33,13 +33,13 @@ var tessellations = (function demo0animationModule(t)
 		.show('rotator') // ditto
 		.wait(0.05)
 		.hide('base') // turn off w/ no transition
-		.to('rotator', ['fill', 'opacity'], [c.rotator, 0.5], 1)
+		.to('rotator', ['fill', 'opacity'], [c.rotator(), 0.5], 1)
 		.wait(3);
 
 		a.caption("Using the bottom left-hand corner as the rotation point, flip the triangle to the side of the first shape...")
 		.wait(1.5)
 		.to('rotator', 'transform', 'rotate(-90deg)', 1.5)
-		.to('rotator', ['fill', 'opacity'], [c.base, 1], 1)
+		.to('rotator', ['fill', 'opacity'], [c.base(), 1], 1)
 		.show('diamond')
 		.wait(0.05)
 		.hide('carved')
@@ -50,15 +50,15 @@ var tessellations = (function demo0animationModule(t)
 		.wait(1)
 		.hide('graphGrid', 1) // fade out 1s, then turn off
 		.show('TLTile')
-		.to('TLTile', ['fill', 'opacity'], [c.TLTile, 0.5], 1)
+		.to('TLTile', ['fill', 'opacity'], [c.TLTile(), 0.5], 1)
 		.to('TLTile', 'transform', 'rotate(-90deg)', 1)
 		.to('TLTile', 'opacity', 1, 0.75)
 		.show('BLTile')
-		.to('BLTile', ['fill', 'opacity'], [c.BLTile, 0.5], 1)
+		.to('BLTile', ['fill', 'opacity'], [c.BLTile(), 0.5], 1)
 		.to('BLTile', 'transform', 'rotate(-180deg)', 1.5)
 		.to('BLTile', 'opacity', 1, 0.75)
 		.show('BRTile')
-		.to('BRTile', ['fill', 'opacity'], [c.BRTile, 0.5], 1)
+		.to('BRTile', ['fill', 'opacity'], [c.BRTile(), 0.5], 1)
 		.to('BRTile', 'transform', 'rotate(-270deg)', 2)
 		.to('BRTile', 'opacity', 1, 0.75)
 		.wait(1.25)
@@ -131,8 +131,9 @@ var tessellations = (function demo0animationModule(t)
 			1.5
 		)
 		.wait(3.5)
-		.hide('zoom', 1)
+		.hide('zoom', 1.5)
 		.caption('')
+		.wait(0.75)
 		.end(); // call t.player.end()
 
 

@@ -10,7 +10,7 @@ var tessellations = (function idTypesModule(t)
 		methods as per the prototypes below
 		*/
 	
-		const ar = t.arrays();
+		const ds = t.ds();
 
 
 		const _setAttrs = (element, attrList) =>
@@ -94,29 +94,24 @@ var tessellations = (function idTypesModule(t)
 
 		const _svg = {
 
-			proto: (function svgProto()
+			proto: (function()
 			{
 
-				const
-					svgNS = 'http://www.w3.org/2000/svg',
-					idp = _id.proto;
+				const svgNS = 'http://www.w3.org/2000/svg';
+				
+				
+				const svgProtoInit = ds.copyProps(_id.proto, [
+					'id',
+					'element',
+					'style',
+					'tag',
+					'untag',
+					'listen',
+					'attr',
+				]);
 
 
-				const _svgProto = {
-	
-					id: idp.id,
-
-					element: idp.element,
-	
-					style: idp.style,
-
-					tag: idp.tag,
-
-					untag: idp.untag,
-
-					listen: idp.listen,
-
-					attr: idp.attr,
+				const svgProtoExtensions = {
 	
 					on: function() {
 						this.style('display', 'block');
@@ -136,12 +131,12 @@ var tessellations = (function idTypesModule(t)
 					// need to make _initialStyles = [] an instance var:
 					addInitialStyleIfNew: function(prop, val)
 					{
-						const propIndex = ar.indexOfKey(
+						const propIndex = ds.indexOfKey(
 							this.initialStyles(), 'property', prop);
 					
 						const propIsNew = (-1 === propIndex);
 		
-						ar.addIfPredicate(
+						ds.addIfPredicate(
 							this._initialStyles,
 							{property: prop, value: val},
 							propIsNew
@@ -162,7 +157,7 @@ var tessellations = (function idTypesModule(t)
 	
 					reset: function()
 					{
-						ar.forEachOf(this.initialStyles(), initialStyle =>
+						ds.forEachOf(this.initialStyles(), initialStyle =>
 						{
 							this.style(initialStyle.property, initialStyle.value);
 						});
@@ -212,9 +207,12 @@ var tessellations = (function idTypesModule(t)
 					},
 				
 				};
+				
+				
+				const svgProto = ds.copyProps([svgProtoInit, svgProtoExtensions]);
 			
 			
-				return _svgProto;
+				return svgProto;
 
 			})(), // end _svg.proto
 	
@@ -233,10 +231,7 @@ var tessellations = (function idTypesModule(t)
 			svg: t.buildType().cachingIdType(_svg),
 		};
 		
-		return {
-			id: () => built.id,
-			svg: () => built.svg,
-		};
+		return ds.accessorsEvenForFns(built);
 
 	}; // end _getIdTypes
 	
@@ -248,9 +243,10 @@ var tessellations = (function idTypesModule(t)
 	const _getGeom = () => {
 		
 		const
-			ar = t.arrays(),
+			ds = t.ds(),
 			svg = t.idTypes().svg();
 		
+			
 		const geom = {
 
 			points: (idStr, pointList) =>
@@ -278,7 +274,7 @@ var tessellations = (function idTypesModule(t)
 			{
 				let str = '';
 
-				ar.forCount(ptList.length, i => {
+				ds.forCount(ptList.length, i => {
 					let currentPt = ptList[i];
 					str += currentPt[0] + ',' + currentPt[1] + ' ';
 				});
