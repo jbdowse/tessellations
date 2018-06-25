@@ -86,7 +86,7 @@ var tessellations = function demo0shapesModule(t) {
 	/* this doesn't really need the full loading infrastructure
  but keeping it in case it gains the need for lazy loading: */
 
-	var _getColors = function _getColors() {
+	var _getDemo0Colors = function _getDemo0Colors() {
 		return {
 			base: '#36c',
 			rotator: '#c3c',
@@ -97,7 +97,7 @@ var tessellations = function demo0shapesModule(t) {
 	};
 
 	t.demo(0).colors = function () {
-		return t.loadOnce(_getColors);
+		return t.loadOnce(_getDemo0Colors);
 	};
 
 	var _doBuildStyles = function _doBuildStyles() {

@@ -144,7 +144,7 @@ var tessellations = (function demo0shapesModule(t)
 	/* this doesn't really need the full loading infrastructure
 	but keeping it in case it gains the need for lazy loading: */
 	
-	const _getColors = () =>
+	const _getDemo0Colors = () =>
 	({
 		base: '#36c',
 		rotator: '#c3c',
@@ -153,7 +153,7 @@ var tessellations = (function demo0shapesModule(t)
 		BRTile: '#f36',
 	});
 	
-	t.demo(0).colors = () => t.loadOnce(_getColors);
+	t.demo(0).colors = () => t.loadOnce(_getDemo0Colors);
 
 
 
