@@ -31,9 +31,9 @@ var tessellations = function idTypesModule(t) {
 			}
 		};
 
-		var _id = {
+		var idType = {
 
-			proto: {
+			methods: {
 
 				id: function id() {
 					return this._id;
@@ -76,26 +76,31 @@ var tessellations = function idTypesModule(t) {
 					return this;
 				}
 
-			}, // end _id.proto
+			}, // end idType.methods
 
 
-			addInstanceVars: function addInstanceVars(newObj, idStr) {
-				newObj._id = idStr;
-				newObj._element = document.getElementById(idStr);
+			instance: function instance(idStr) {
+				return {
+
+					_id: idStr,
+
+					_element: document.getElementById(idStr)
+
+				};
 			}
 
-		}; // end _id
+		}; // end idType
 
 
-		var _svg = {
+		var svgType = {
 
-			proto: function () {
+			methods: function () {
 
 				var svgNS = 'http://www.w3.org/2000/svg';
 
-				var svgProtoInit = ds.copyProps(_id.proto, ['id', 'element', 'style', 'tag', 'untag', 'listen', 'attr']);
+				var svgBase = ds.copyProps(idType.methods, ['id', 'element', 'style', 'tag', 'untag', 'listen', 'attr']);
 
-				var svgProtoExtensions = {
+				var svgExtensions = {
 
 					on: function on() {
 						this.style('display', 'block');
@@ -170,23 +175,22 @@ var tessellations = function idTypesModule(t) {
 
 				};
 
-				var svgProto = ds.copyProps([svgProtoInit, svgProtoExtensions]);
+				var svgMethods = ds.copyProps([svgBase, svgExtensions]);
 
-				return svgProto;
-			}(), // end _svg.proto
+				return svgMethods;
+			}(), // end svgType.methods
 
 
-			addInstanceVars: function addInstanceVars(newObj, idStr) {
-				_id.addInstanceVars(newObj, idStr);
-				newObj._initialStyles = [];
+			instance: function instance(idStr) {
+				return ds.copyProps([idType.instance(idStr), { _initialStyles: [] }]);
 			}
 
-		}; // end _svg
+		}; // end svgType
 
 
 		var built = {
-			id: t.buildType().cachingIdType(_id),
-			svg: t.buildType().cachingIdType(_svg)
+			id: t.typeBuilder().cachingIdType(idType),
+			svg: t.typeBuilder().cachingIdType(svgType)
 		};
 
 		return ds.accessorsEvenForFns(built);

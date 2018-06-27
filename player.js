@@ -17,7 +17,7 @@ var tessellations = function playerModule(t) {
 			isPaused: false
 		};
 
-		var playerInit = ds.accessors(_st);
+		var playerBase = ds.accessors(_st);
 
 		var playerExtensions = {
 
@@ -116,7 +116,7 @@ var tessellations = function playerModule(t) {
 		}; // end playerExtensions
 
 
-		var player = ds.copyProps([playerInit, playerExtensions]);
+		var player = ds.copyProps([playerBase, playerExtensions]);
 
 		return player;
 	}; // end _getPlayer

@@ -18,7 +18,7 @@ var tessellations = (function demo0animationModule(t)
 			g = t.geom();
 
 
-		const a = t.animation().init();
+		const a = t.Animation();
 
 		/* 	*/
 		a.caption("Start by drawing a conventional, regular polygon...")

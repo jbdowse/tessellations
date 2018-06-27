@@ -128,35 +128,49 @@ var tessellations = (function genericsModule(t)
 			// copyProps works for single source object or arrays of them;
 			// later source properties override earlier ones of same name:
 	
-			copyProps: (protos, propNameListToCopy) =>
-			{
-				const protoList = ds.lift(protos);
+			copyProps: (() => {
 				
-				const newObj = {};
-				
-				if (propNameListToCopy) {
-					// copy just the listed properties
+				const copy = {
 					
-					ds.forEachOf(protoList, proto => {
-						ds.forEachOf(propNameListToCopy, propName => {
-							if (proto[propName]) {
+					allProps: protoList =>
+					{
+						const newObj = {};
+					
+						ds.forEachOf(protoList, proto => {
+							for (const propName in proto) {
 								newObj[propName] = proto[propName];
 							}
 						});
-					})
-				}
-				else {
-					// copy all properties
+						
+						return newObj;
+					},
 					
-					ds.forEachOf(protoList, proto => {
-						for (const propName in proto) {
-							newObj[propName] = proto[propName];
-						}
-					});
-				}
-			
-				return newObj;
-			},
+					someProps: (protoList, propNames) =>
+					{
+						const newObj = {};
+					
+						ds.forEachOf(protoList, proto => {
+							ds.forEachOf(propNames, propName => {
+								if (proto[propName]) {
+									newObj[propName] = proto[propName];
+								}
+							});
+						});
+						
+						return newObj;
+					},
+				};
+				
+				return (protos, propNames) =>
+				{
+					const protoList = ds.lift(protos);
+				
+					return propNames?
+						copy.someProps(protoList, propNames) :
+						copy.allProps(protoList);
+				};
+				
+			})(),
 			
 		}; // end ds
 		
@@ -170,52 +184,54 @@ var tessellations = (function genericsModule(t)
 
 	
 	
-	const _getBuildType = () => {
+	const _getTypeBuilder = () => {
 	
 		const ds = t.ds();
 	
 
-		const _typeBuilders = {
+		const typeBuilder = {
 
 			basic: type =>
-				() => {
-					const newObj = ds.copyProps(type.proto);
-					type.addInstanceVars(newObj);
-					return newObj;
-				},
+				() => ds.copyProps([
+					type.methods,
+					type.instance() // still need this to be a fn call rather than plain object in general so don't get e.g. [] shared by all instances
+				]),
 
 
 			cachingIdType: type =>
 				(() => {
-				
-					const cache = []; // private, shared by entire type ("static")
+					
+					const ct = {
+						
+						cache: {}, // private, shared by entire type ("static")
 
-					const createObject = idStr =>
-					{
-						const newObj = ds.copyProps(type.proto);
-						type.addInstanceVars(newObj, idStr);
-						cache.push(newObj);
-				    	return newObj;
-					};
+						createObject: idStr =>
+						{
+							const newObj = ds.copyProps([
+								type.methods,
+								type.instance(idStr)
+							]);
 
-					const getOrCreate = idStr =>
-					{
-						const cachedObj = ds.findByKey(cache, '_id', idStr);
-						return cachedObj || createObject(idStr);
+							ct.cache[idStr] = newObj;
+						
+					    	return newObj;
+						},
+
+						getOrCreate: idStr => ct.cache[idStr] || ct.createObject(idStr),
 					};
 			
-					return getOrCreate;
+					return ct.getOrCreate;
 		
 				})(),
 			
-		}; // end _typeBuilders
+		}; // end typeBuilder
 		
 		
-		return _typeBuilders;
+		return typeBuilder;
 	
-	}; // end _getBuildType
+	}; // end _getTypeBuilder
 	
-	t.buildType = () => t.loadOnce(_getBuildType);
+	t.typeBuilder = () => t.loadOnce(_getTypeBuilder);
 	
 	
 	return t;

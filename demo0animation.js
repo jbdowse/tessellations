@@ -16,7 +16,7 @@ var tessellations = function demo0animationModule(t) {
 		    c = t.demo(0).colors(),
 		    g = t.geom();
 
-		var a = t.animation().init();
+		var a = t.Animation();
 
 		/* 	*/
 		a.caption("Start by drawing a conventional, regular polygon...").show('graphGrid', 0.75) // turn on element & fade it in; add 1 sec to elapsedTime

@@ -35,9 +35,9 @@ var tessellations = (function idTypesModule(t)
 		};
 
 	
-		const _id = {
+		const idType = {
 
-			proto: {
+			methods: {
 
 				id: function() {
 					return this._id;
@@ -80,27 +80,29 @@ var tessellations = (function idTypesModule(t)
 					return this;
 				},
 			
-			}, // end _id.proto
+			}, // end idType.methods
 	
 	
-			addInstanceVars: (newObj, idStr) =>
-			{
-				newObj._id = idStr;
-				newObj._element = document.getElementById(idStr);
-			},
+			instance: idStr => ({
+				
+				_id: idStr,
+				
+				_element: document.getElementById(idStr),
+				
+			}),
 	
-		}; // end _id
+		}; // end idType
 
 
-		const _svg = {
+		const svgType = {
 
-			proto: (function()
+			methods: (function()
 			{
 
 				const svgNS = 'http://www.w3.org/2000/svg';
 				
 				
-				const svgProtoInit = ds.copyProps(_id.proto, [
+				const svgBase = ds.copyProps(idType.methods, [
 					'id',
 					'element',
 					'style',
@@ -111,7 +113,7 @@ var tessellations = (function idTypesModule(t)
 				]);
 
 
-				const svgProtoExtensions = {
+				const svgExtensions = {
 	
 					on: function() {
 						this.style('display', 'block');
@@ -209,26 +211,29 @@ var tessellations = (function idTypesModule(t)
 				};
 				
 				
-				const svgProto = ds.copyProps([svgProtoInit, svgProtoExtensions]);
+				const svgMethods = ds.copyProps([svgBase, svgExtensions]);
 			
 			
-				return svgProto;
+				return svgMethods;
 
-			})(), // end _svg.proto
+			})(), // end svgType.methods
 	
 
-			addInstanceVars: (newObj, idStr) => {
-				_id.addInstanceVars(newObj, idStr);
-				newObj._initialStyles = [];
-			},
+			instance: idStr => ds.copyProps([
+				
+				idType.instance(idStr),
+				
+				{_initialStyles: []},
+				
+			]),
 		
-		}; // end _svg
+		}; // end svgType
 
 		
 		
 		const built = {
-			id: t.buildType().cachingIdType(_id),
-			svg: t.buildType().cachingIdType(_svg),
+			id: t.typeBuilder().cachingIdType(idType),
+			svg: t.typeBuilder().cachingIdType(svgType),
 		};
 		
 		return ds.accessorsEvenForFns(built);

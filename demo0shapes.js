@@ -13,7 +13,7 @@ var tessellations = function demo0shapesModule(t) {
 
 	// note this and the other _do...'s are command- rather than data-functions, because they're just modifying DOM elements
 
-	var _doBuildShapes = function _doBuildShapes() {
+	var _doBuildDemo0Shapes = function _doBuildDemo0Shapes() {
 
 		var ds = t.ds(),
 		    svg = t.idTypes().svg(),
@@ -77,10 +77,10 @@ var tessellations = function demo0shapesModule(t) {
 		_build.allShapes();
 
 		return t.demo(0);
-	}; // end _doBuildShapes
+	}; // end _doBuildDemo0Shapes
 
 	t.demo(0).buildShapes = function () {
-		return t.loadOnce(_doBuildShapes);
+		return t.loadOnce(_doBuildDemo0Shapes);
 	};
 
 	/* this doesn't really need the full loading infrastructure
@@ -104,7 +104,7 @@ var tessellations = function demo0shapesModule(t) {
 		return t.loadOnce(_getDemo0Colors);
 	};
 
-	var _doBuildStyles = function _doBuildStyles() {
+	var _doBuildDemo0Styles = function _doBuildDemo0Styles() {
 
 		var ds = t.ds(),
 		    getId = t.idTypes().id(),
@@ -185,10 +185,10 @@ var tessellations = function demo0shapesModule(t) {
 		_init.allStyles();
 
 		return t.demo(0);
-	}; // end _doBuildStyles
+	}; // end _doBuildDemo0Styles
 
 	t.demo(0).buildStyles = function () {
-		return t.loadOnce(_doBuildStyles);
+		return t.loadOnce(_doBuildDemo0Styles);
 	};
 
 	return t;

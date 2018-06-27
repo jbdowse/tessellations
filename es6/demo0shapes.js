@@ -12,7 +12,7 @@ var tessellations = (function demo0shapesModule(t)
 	
 	// note this and the other _do...'s are command- rather than data-functions, because they're just modifying DOM elements
 	
-	const _doBuildShapes = () => {
+	const _doBuildDemo0Shapes = () => {
 		
 		const
 			ds = t.ds(),
@@ -134,9 +134,9 @@ var tessellations = (function demo0shapesModule(t)
 		
 		return t.demo(0);
 
-	}; // end _doBuildShapes
+	}; // end _doBuildDemo0Shapes
 
-	t.demo(0).buildShapes = () => t.loadOnce(_doBuildShapes);
+	t.demo(0).buildShapes = () => t.loadOnce(_doBuildDemo0Shapes);
 
 
 
@@ -163,7 +163,7 @@ var tessellations = (function demo0shapesModule(t)
 
 
 
-	const _doBuildStyles = () => {
+	const _doBuildDemo0Styles = () => {
 		
 		const
 			ds = t.ds(),
@@ -320,9 +320,9 @@ var tessellations = (function demo0shapesModule(t)
 		
 		return t.demo(0);
 
-	}; // end _doBuildStyles
+	}; // end _doBuildDemo0Styles
 	
-	t.demo(0).buildStyles = () => t.loadOnce(_doBuildStyles);
+	t.demo(0).buildStyles = () => t.loadOnce(_doBuildDemo0Styles);
 	
 	
 	return t;

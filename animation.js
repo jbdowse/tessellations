@@ -60,9 +60,9 @@ var tessellations = function animationModule(t) {
 		}(); // end _ut
 
 
-		var _animation = {};
+		var Animation = {};
 
-		_animation.proto = {
+		Animation.methods = {
 
 			/* retaining full function syntax here as arrows don't work in same way with (this) -
    except using arrows for unnamed func args of enqueue() because they either don't use (this)
@@ -264,24 +264,27 @@ var tessellations = function animationModule(t) {
 				return this;
 			}
 
-		}; // end _animation.proto
+		}; // end animation.methods
 
 
-		_animation.addInstanceVars = function (newObj) {
-			newObj._actions = [];
-			newObj._animatedElements = [];
-			newObj._elapsedTime = 0;
+		Animation.instance = function () {
+			return {
+
+				_actions: [],
+
+				_animatedElements: [],
+
+				_elapsedTime: 0
+
+			};
 		};
 
-		var animationCtor = t.buildType().basic(_animation);
-
-		return {
-			init: animationCtor
-		};
+		return t.typeBuilder().basic(Animation);
 	}; // end _getAnimation
 
-	t.animation = function () {
-		return t.loadOnce(_getAnimation);
+	// double call here in order to let t.Animation act as a ctor
+	t.Animation = function () {
+		return t.loadOnce(_getAnimation)();
 	};
 
 	return t;
