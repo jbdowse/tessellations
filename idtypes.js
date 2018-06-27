@@ -13,14 +13,13 @@ var tessellations = function idTypesModule(t) {
 
 		var ds = t.ds();
 
-		var _setAttrs = function _setAttrs(element, attrList) {
+		var _setAttrs = function _setAttrs(element, attrList, ns) {
 			for (var i = 0; i < attrList.length; i += 2) {
 				var attrName = attrList[i];
 				var attrValue = attrList[i + 1];
 
-				if (attrName === 'href') {
-					// note this is only for SVG elements!
-					// so need to revise/split to svg()-specific if href change is needed for non-SVG;
+				if (ns.nsIsNeeded && attrName === 'href') {
+					// only needed for SVG elements;
 					// this is to fix the bug of dynamically-changed-(xlink:)href <use>s not appearing in Safari
 					// see https://github.com/patrick-steele-idem/morphdom/issues/34
 
@@ -61,7 +60,7 @@ var tessellations = function idTypesModule(t) {
 				},
 
 				attr: function attr(attr_list) {
-					_setAttrs(this.element(), attr_list);
+					_setAttrs(this.element(), attr_list, {});
 					return this;
 				},
 
@@ -98,9 +97,14 @@ var tessellations = function idTypesModule(t) {
 
 				var svgNS = 'http://www.w3.org/2000/svg';
 
-				var svgBase = ds.copyProps(idType.methods, ['id', 'element', 'style', 'tag', 'untag', 'listen', 'attr']);
+				var svgBase = ds.copyProps(idType.methods, ['id', 'element', 'style', 'tag', 'untag', 'listen']);
 
 				var svgExtensions = {
+
+					attr: function attr(attr_list) {
+						_setAttrs(this.element(), attr_list, { nsIsNeeded: true });
+						return this;
+					},
 
 					on: function on() {
 						this.style('display', 'block');
@@ -160,7 +164,7 @@ var tessellations = function idTypesModule(t) {
 
 					defineAnon: function defineAnon(child_el_type, attr_list) {
 						var child = document.createElementNS(svgNS, child_el_type);
-						_setAttrs(child, attr_list);
+						_setAttrs(child, attr_list, { nsIsNeeded: true });
 						this.element().appendChild(child);
 						return this;
 					},
@@ -168,7 +172,7 @@ var tessellations = function idTypesModule(t) {
 					define: function define(child_el_type, child_id, attr_list) {
 						var child = document.createElementNS(svgNS, child_el_type);
 						child.id = child_id;
-						_setAttrs(child, attr_list);
+						_setAttrs(child, attr_list, { nsIsNeeded: true });
 						this.element().appendChild(child);
 						return this;
 					}
