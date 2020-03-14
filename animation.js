@@ -1,5 +1,3 @@
-'use strict';
-
 // All time-changing functionality 
 
 var tessellations = function animationModule(t) {

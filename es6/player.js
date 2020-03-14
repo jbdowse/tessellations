@@ -24,8 +24,6 @@ var tessellations = (function playerModule(t)
 
 		const playerExtensions = {
 		
-			// using => wherever (this) not used --> which should be everywhere...
-		
 			setCurrentAnimation: animation => { _st.currentAnimation = animation; },
 		
 			isPlaying: () => _st.isPlaying && ! _st.isPaused,
@@ -50,7 +48,9 @@ var tessellations = (function playerModule(t)
 			},
 		
 			// pretty surprised that these references to const player work even before it's introduced, but they do! hmm
-			play: function(/*demoIndex*/)
+			// guess it's that function bodies get parsed but nothing within them evaluated at the point of definition?
+			// which would be why it's OK to call not-yet-defined functions as well, as long as the caller fn isn't called till load time
+			play: (/*demoIndex*/) =>
 			{
 				if (! player.isPlaying() ) {
 		
@@ -71,7 +71,7 @@ var tessellations = (function playerModule(t)
 			},
 
 
-			stop: function()
+			stop: () =>
 			{
 				ds.forEachOf(player.playQueue(), timeout =>
 				{
@@ -90,7 +90,7 @@ var tessellations = (function playerModule(t)
 			},
 		
 		
-			addListeners: function()
+			addListeners: () =>
 			{
 				id('play').listen('click', () => {
 					player.play(/*0*/);
@@ -108,7 +108,7 @@ var tessellations = (function playerModule(t)
 							player.play();
 						}
 					}
-				});
+				}, false);
 
 				// eventually need to add listeners for pause/resume, demo 1, home screen, ...
 			},

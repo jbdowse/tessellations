@@ -1,6 +1,16 @@
 /* 
 TODO
 
+190610
+- working on animations for DSA site and learning more about CSS animations, @keyframes, etc, and it seems like they might allow much simpler implementation of whole animation scores; see e.g. https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Animations/Using_CSS_animations#Setting_multiple_animation_property_values
+	- think the general idea would be, for each object in the score, to compile to a @keyframes defn that would apply to that object, and then generally to have a  
+- ALSO should be able to implement pause/resume really simply via animation-play-state: https://coderwall.com/p/tht85a/pause-and-resume-css3-animations-w-css - looks like stopping/restarting is more involved tho: https://css-tricks.com/restart-css-animation/
+	- hmm looks like trying to get to an arbitrary point in an animation is difficult tho: https://css-tricks.com/controlling-css-animations-transitions-javascript/
+- think that o: values in animation scores (as in ../decl-anim-score.js) should be CSS selectors; then e.g. could have {... o: '#rotator' ...} or more conveniently: var rotator = '#rotator'; {... o: rotator ...}
+- definitely want to use SFEB.Class for further tessellations development
+
+
+
 Miscellaneous:
 
 	- Write the second demo
@@ -508,4 +518,16 @@ t('player').pgon('shape', [TL, bumpOut, roPt, bumpIn, BR]);
 // now note that if polygon#shape is already in the markup, just without point defns, could have e.g.:
 t('shape').setPts([TL, bumpOut, ...]);
 
+190422
+- thinking about lattice defn: for a basis, basically can have either:
+	- 3 non-collinear points
+		.lattice([0,0], [0,1], [1,0])
+	- 2 points and a non-collinear vector to the third (rect or polar coords)
+		.lattice([0,0], {x:1,y:0}, [1, 0])
+		.lattice([0,0], [0,1], {r:1,th:90})
+	- 1 point and 2 non-collinear vectors to the other points (each rect or polar coords)
+		.lattice([0,0], {r:1,th:0}, {x:0,y:1})
+- and then the 1st point can be the origin, 2nd point (or 1st pt + 2nd-arg vector) can be 1st-coord unit, and 3rd point (or 1st pt + 3rd-arg vector) can be 2nd-coord unit
+	- tho also could shift origin, e.g.:
+		.lattice([0,0], [0,1], [1,0], {origin: [10,10]})
 */

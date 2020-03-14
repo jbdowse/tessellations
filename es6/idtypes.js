@@ -59,7 +59,7 @@ var tessellations = (function idTypesModule(t)
 				},
 
 				listen: function(event_type, func) {
-					this.element().addEventListener(event_type, func);
+					this.element().addEventListener(event_type, func, false);
 					return this;
 				},
 

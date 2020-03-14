@@ -1,5 +1,3 @@
-'use strict';
-
 // Play/stop etc
 
 var tessellations = function playerModule(t) {
@@ -20,8 +18,6 @@ var tessellations = function playerModule(t) {
 		var playerBase = ds.accessors(_st);
 
 		var playerExtensions = {
-
-			// using => wherever (this) not used --> which should be everywhere...
 
 			setCurrentAnimation: function setCurrentAnimation(animation) {
 				_st.currentAnimation = animation;
@@ -60,6 +56,8 @@ var tessellations = function playerModule(t) {
 			},
 
 			// pretty surprised that these references to const player work even before it's introduced, but they do! hmm
+			// guess it's that function bodies get parsed but nothing within them evaluated at the point of definition?
+			// which would be why it's OK to call not-yet-defined functions as well, as long as the caller fn isn't called till load time
 			play: function play() /*demoIndex*/{
 				if (!player.isPlaying()) {
 
@@ -108,7 +106,7 @@ var tessellations = function playerModule(t) {
 							player.play();
 						}
 					}
-				});
+				}, false);
 
 				// eventually need to add listeners for pause/resume, demo 1, home screen, ...
 			}

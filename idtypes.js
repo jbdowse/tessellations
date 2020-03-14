@@ -1,5 +1,3 @@
-'use strict';
-
 // Wrappers for DOM elements + utility functions for SVG element definition
 
 var tessellations = function idTypesModule(t) {
@@ -55,7 +53,7 @@ var tessellations = function idTypesModule(t) {
 				},
 
 				listen: function listen(event_type, func) {
-					this.element().addEventListener(event_type, func);
+					this.element().addEventListener(event_type, func, false);
 					return this;
 				},
 

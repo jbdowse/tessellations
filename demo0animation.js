@@ -1,5 +1,3 @@
-'use strict';
-
 // Timeline of SVG animations and caption changes
 
 var tessellations = function demo0animationModule(t) {

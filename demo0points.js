@@ -1,5 +1,3 @@
-"use strict";
-
 // Definitions for points used in shape definitions & transformations
 
 var tessellations = function demo0pointsModule(t) {

@@ -1,5 +1,3 @@
-'use strict';
-
 // Namespace to encapsulate tessellation pattern definitions
 
 var tessellations = function demo0patternsModule(t) {

@@ -10,4 +10,4 @@ window.addEventListener('load', function fullSetup()
 	
 	t.demo(0).initSvg();
 	t.player().addListeners();
-});
+}, false);

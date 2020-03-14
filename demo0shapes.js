@@ -1,5 +1,3 @@
-'use strict';
-
 // Defining the initial-construction shapes
 
 var tessellations = function demo0shapesModule(t) {

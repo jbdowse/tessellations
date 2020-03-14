@@ -1,5 +1,3 @@
-'use strict';
-
 // Type builders + array functions
 
 var tessellations = function genericsModule(t) {

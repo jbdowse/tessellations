@@ -1,5 +1,3 @@
-'use strict';
-
 // Set up JS-defined SVGs, add event listeners
 
 /* Loose-aggregration-module setup - order of js file reading shouldn't matter -
@@ -11,4 +9,4 @@ window.addEventListener('load', function fullSetup() {
 
 	t.demo(0).initSvg();
 	t.player().addListeners();
-});
+}, false);
